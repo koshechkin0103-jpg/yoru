@@ -1,0 +1,20 @@
+# В репозиторий (и на GitHub Pages) идут только файлы сайта.
+# Исходники — видео, шрифты, макеты, рабочие папки, пароль и инструменты выгрузки — остаются на компьютере.
+/*
+!/.gitignore
+!/.nojekyll
+!/README.md
+!/index.html
+!/product.html
+!/cart.html
+!/css/
+!/js/
+!/fonts/
+!/img/
+!/frames/
+# файлы для теста на Тильде — сайту не нужны
+/css/tilda-*
+/js/tilda-*
+/js/catalog.js
+/js/product-view.js
+/js/cart-view.js

@@ -1,0 +1,253 @@
+/* YORU — блоки после «Models from the new collection»: «Brand philosophy» и «Collections».
+   Подключается после css/journey.css (шрифты, цвета, шум фона, общие кегли).
+
+   Размеры — в единицах макетов, пересчитанных в сетку 1440 (макеты 1920 px × 0.75):
+   «Brand philosophy» — 1440×1015, по ширине экрана (блок выше экрана и просто прокручивается);
+   «Collections» — 1440×795, как блок моделей: целиком помещается в экран.
+   Кегли — clamp с долей rem 10 %, как в остальных блоках. До 1200 px — всё друг под другом. */
+
+.philosophy, .collections { position: relative; color: #fff; container-type: inline-size; }
+.philosophy > *, .collections > * {
+  --uw: calc(100cqw / 1440);                 /* «Brand philosophy»: только по ширине */
+  --um: min(100cqw / 1440, 100svh / 700);    /* «Collections»: композиция 1440×700 целиком в экране */
+
+  --fs-ptitle: clamp(2.1875rem, calc(0.2625rem + 37.8 * var(--uw)), 5.25rem);       /* 35  / 42    / 84 — все заголовки блоков */
+  --fs-ptext:  clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--uw)), 1.125rem);     /*  7.5 / 9    / 18 */
+  --fs-plogo:  clamp(3.083rem, calc(0.37rem + 53.28 * var(--uw)), 7.4rem);          /* 49.3 / 59.2 / 118.4 */
+
+  --fs-ctitle: clamp(2.1875rem, calc(0.2625rem + 37.8 * var(--um)), 5.25rem);       /* 35  / 42    / 84 */
+  --fs-cmeta:  clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--um)), 1.125rem);     /*  7.5 / 9    / 18 — наборный текст */
+  --fs-cnum:   clamp(0.4167rem, calc(0.05rem + 7.2 * var(--um)), 1rem);             /*  6.7 / 8    / 16 — мелкие подписи */
+  --fs-cname:  clamp(0.78125rem, calc(0.09375rem + 13.5 * var(--um)), 1.875rem);    /* 12.5 / 15   / 30 — названия моделей */
+  --fs-cprice: clamp(0.75rem, calc(0.09rem + 12.96 * var(--um)), 1.8rem);           /* 12  / 14.4  / 28.8 — цены */
+  --fs-cbtn:   clamp(1.125rem, calc(0.1416875rem + 20.403 * var(--um)), 2.83375rem); /* 18 / 22.67 / 45 — кнопки */
+}
+
+/* ======================================================================
+   BRAND PHILOSOPHY
+   ====================================================================== */
+.philosophy__frame { position: relative; width: calc(1440 * var(--uw)); height: calc(1014.75 * var(--uw)); margin: 0 auto; }
+.philosophy__frame > * { position: absolute; margin: 0; }
+.philosophy__title {
+  left: calc(var(--edge) - 2.94 * var(--uw));   /* край букв — в 20 px от экрана */
+  top: calc(22.2 * var(--uw));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-ptitle);
+  line-height: 1.0893;
+  font-variation-settings: "wght" 800, "wdth" 785;
+  font-weight: normal;
+  color: #535257;
+  white-space: nowrap;
+}
+.philosophy__text {
+  right: calc(var(--edge) + 0.75 * var(--uw));
+  top: calc(23.96 * var(--uw));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-ptext);
+  line-height: 2.0833;
+  text-align: right;
+  white-space: nowrap;
+}
+.philosophy__photo { overflow: hidden; border-radius: calc(3 * var(--uw)); background: #15141a; }
+.philosophy__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.philosophy__photo--big   { left: var(--edge);    top: calc(170.25 * var(--uw)); width: calc(697.5 * var(--uw)); height: calc(752.25 * var(--uw)); }
+.philosophy__photo--small { left: calc(var(--edge) + 712.5 * var(--uw)); top: calc(170.25 * var(--uw)); width: calc(453 * var(--uw));   height: calc(581.25 * var(--uw)); }
+.philosophy__logo { left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.philosophy__mark { position: absolute; left: calc(1075.5 * var(--uw) - var(--edge)); top: calc(856.5 * var(--uw)); width: calc(86.25 * var(--uw)); height: auto; }
+.philosophy__word {
+  position: absolute;
+  left: calc(1181.25 * var(--uw) - var(--edge));   /* правый край «YORU» — в 20 px от экрана */
+  top: calc(860.7 * var(--uw));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-plogo);
+  line-height: 1.0344;
+  font-variation-settings: "wght" 800, "wdth" 984;
+  white-space: nowrap;
+}
+
+/* ======================================================================
+   COLLECTIONS
+   ====================================================================== */
+.collections__frame { position: relative; width: calc(1440 * var(--um)); height: calc(700 * var(--um)); margin: 0 auto;
+  --g: calc((100cqw - 1440 * var(--um)) / 2); }   /* поле между рамкой и краем экрана: края контента — в 20 px от экрана */
+.collections__frame > * { position: absolute; margin: 0; }
+.collections__title {
+  left: calc(var(--edge) + 0.75 * var(--um) - var(--g));
+  top: calc(76.2 * var(--um));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-ctitle);
+  line-height: 1.0893;
+  font-variation-settings: "wght" 800, "wdth" 785;
+  font-weight: normal;
+  white-space: nowrap;
+}
+.collections__meta {
+  right: calc(var(--edge) - var(--g));
+  top: calc(70.2 * var(--um));
+  padding: 0; list-style: none;
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-cmeta);
+  line-height: 2.0833;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.collections__cards {
+  left: calc(var(--edge) - var(--g));
+  right: calc(var(--edge) - var(--g));
+  top: calc(171 * var(--um));
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(15 * var(--um));
+}
+
+/* карточка коллекции */
+.collection-card {
+  position: relative;
+  height: calc(445.5 * var(--um));
+  border: max(1px, calc(0.75 * var(--um))) solid #fff;
+  border-radius: calc(2.25 * var(--um));
+}
+.collection-card > * { position: absolute; margin: 0; }
+.collection-card__num, .collection-card__badge {
+  top: calc(28.67 * var(--um));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-cnum);
+  line-height: 1.6;
+  color: var(--red, #B53031);
+  white-space: nowrap;
+}
+.collection-card__num   { left: calc(21.25 * var(--um)); }
+.collection-card__badge { right: calc(23.15 * var(--um)); }
+/* название и цена — по одной базовой линии */
+.collection-card__name {
+  left: calc(20.8 * var(--um));
+  top: calc(62.2 * var(--um));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-cname);
+  font-weight: normal;
+  line-height: 1.2;
+  font-variation-settings: "wght" 800, "wdth" 865;
+  white-space: nowrap;
+}
+.collection-card__price {
+  right: calc(23.25 * var(--um));
+  top: calc(57.8 * var(--um));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-cprice);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.collection-card__view {
+  left: calc(50% - 124.6 * var(--um));   /* как в макете: на 1.4u правее середины карточки */
+  top: calc(104.5 * var(--um));
+  width: calc(252 * var(--um));
+  height: calc(226 * var(--um));
+  overflow: hidden;
+}
+.collection-card__strip { display: flex; width: 100%; height: 100%; transition: transform .6s cubic-bezier(.65, 0, .35, 1); }
+.collection-card__strip img { flex: none; width: 100%; height: 100%; object-fit: contain; }
+
+/* квадратики — как в блоке моделей: активный красный, остальные белые */
+.collection-card__dots { left: calc(21.25 * var(--um)); top: calc(145 * var(--um)); display: flex; flex-direction: column; gap: calc(7.5 * var(--um)); padding: 0; list-style: none; }
+.collection-card__dot {
+  position: relative; display: block;
+  width: calc(11.25 * var(--um)); height: calc(11.25 * var(--um));
+  padding: 0; border: 0; border-radius: 0;
+  background: #fff; cursor: pointer;
+  transition: background-color .2s ease;
+}
+.collection-card__dot::after { content: ""; position: absolute; inset: -6px; }   /* увеличенная зона нажатия */
+.collection-card__dot[aria-current="true"] { background: var(--red, #B53031); cursor: default; }
+.collection-card__dot:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+
+/* кнопки: в покое — обводка, при наведении — белая заливка (как первая карточка в макете) */
+.collection-card__btn {
+  display: flex; align-items: center; justify-content: center;
+  height: calc(36.75 * var(--um));
+  box-sizing: border-box;
+  border: max(1px, calc(0.75 * var(--um))) solid #fff;
+  border-radius: calc(1.5 * var(--um));
+  color: #fff;
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-cbtn);
+  line-height: 1;
+  font-variation-settings: "wght" 500, "wdth" 349;
+  padding-top: calc(2.5 * var(--um));
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .2s ease, color .2s ease;
+}
+.collection-card__btn:hover { background: #fff; color: #0A0A0F; }
+.collection-card__btn:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+.collection-card__btn { left: calc(21.75 * var(--um)); right: calc(23.25 * var(--um)); top: calc(385.5 * var(--um)); }
+
+/* ======================================================================
+   ПОЯВЛЕНИЕ ПРИ ПРОКРУТКЕ (класс .reveals на <html> ставит js/blocks.js;
+   без скрипта и при «уменьшить движение» всё видно сразу)
+   ====================================================================== */
+.reveals .reveal { transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1), clip-path 1.1s cubic-bezier(.65, 0, .35, 1); }
+.reveals .reveal:not(.is-in) { opacity: 0; transform: translateY(32px); }
+/* фото открываются шторкой снизу вверх, сама картинка при этом чуть «оседает» */
+.reveals .philosophy__photo.reveal { transform: none; opacity: 1; clip-path: inset(0 0 0 0 round calc(3 * var(--uw))); }
+.reveals .philosophy__photo.reveal:not(.is-in) { clip-path: inset(100% 0 0 0 round calc(3 * var(--uw))); }
+.reveals .philosophy__photo img { transition: transform 1.4s cubic-bezier(.2, .7, .2, 1); }
+.reveals .philosophy__photo:not(.is-in) img { transform: scale(1.12); }
+/* карточки — по очереди слева направо */
+.reveals .collection-card.reveal:nth-child(2) { transition-delay: .1s; }
+.reveals .collection-card.reveal:nth-child(3) { transition-delay: .2s; }
+.reveals .collection-card.reveal:nth-child(4) { transition-delay: .3s; }
+.reveals .philosophy__photo--small.reveal { transition-delay: .15s; }
+
+/* ======================================================================
+   ДО 1200 px — телефон и планшет: всё друг под другом
+   ====================================================================== */
+@media (max-width: 1199.98px) {
+  .philosophy > *, .collections > * {
+    --gap: var(--m-gap);
+    --fs-ptitle: var(--m-h);
+    --fs-ptext: var(--m-text);
+    --fs-plogo: clamp(3rem, calc(2rem + 6vw), 5.5rem);
+    --fs-ctitle: var(--m-h);
+    --fs-cmeta: var(--m-text);
+    --fs-cnum: 0.75rem;
+    --fs-cname: var(--m-name);
+    --fs-cprice: clamp(1.125rem, calc(1rem + 0.5vw), 1.375rem);
+    --fs-cbtn: var(--m-btn);
+  }
+  .philosophy__frame, .collections__frame { width: auto; height: auto; padding: 56px var(--gap); display: flex; flex-direction: column; gap: 16px; }
+  .philosophy__frame > *, .collections__frame > * { position: relative; left: auto; right: auto; top: auto; }
+
+  .philosophy__title { line-height: var(--m-lh); white-space: normal; font-variation-settings: "wght" 550, "wdth" 830; }
+  .philosophy__text { text-align: left; line-height: var(--m-tlh); white-space: normal; max-width: 360px; text-wrap: pretty; }
+  .philosophy__text br { display: none; }
+  .philosophy__photo { width: 100%; height: auto; border-radius: 4px; }
+  .philosophy__photo--big   { aspect-ratio: 930 / 1003; margin-top: 16px; }
+  .philosophy__photo--small { aspect-ratio: 604 / 775; width: 70%; align-self: flex-end; }
+  .reveals .philosophy__photo.reveal { clip-path: inset(0 0 0 0 round 4px); }
+  .reveals .philosophy__photo.reveal:not(.is-in) { clip-path: inset(100% 0 0 0 round 4px); }
+  .philosophy__logo { display: none; }   /* на телефоне логотипа в блоке нет */
+
+  .collections__title { line-height: var(--m-lh); font-variation-settings: "wght" 550, "wdth" 830; }
+  .collections__meta { line-height: var(--m-tlh); }
+  .collections__cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-top: 16px; }
+  .collection-card {
+    height: auto; min-width: 0; padding: 20px;
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "num num badge" "name name price" "dots view view" "btn btn btn";
+    gap: 8px 12px; border-width: 1px; border-radius: 6px;
+  }
+  .collection-card > * { position: relative; left: auto; right: auto; top: auto; }
+  .collection-card__num { grid-area: num; } .collection-card__badge { grid-area: badge; }
+  .collection-card__name { grid-area: name; line-height: 1; font-variation-settings: "wght" 550, "wdth" 830; } .collection-card__price { grid-area: price; justify-self: end; }
+  .collection-card__dots { grid-area: dots; align-self: center; gap: 8px; }
+  .collection-card__dot { width: 12px; height: 12px; }
+  .collection-card__view { grid-area: view; width: 100%; height: auto; aspect-ratio: 1.12; }
+  .collection-card__btn { grid-area: btn; width: auto; height: 49px; margin-top: 8px; padding-top: 0; border-width: 1px; border-radius: 3px; font-variation-settings: "wght" 500, "wdth" 358; }
+}
+@media (min-width: 640px) and (max-width: 1199.98px) {
+  .collections__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* вся карточка товара — ссылка на страницу товара (js/blocks.js) */
+.lot.is-link, .collection-card.is-link { cursor: pointer; transition: border-color .25s ease, background-color .25s ease; }
+.lot.is-link:hover, .collection-card.is-link:hover { background-color: rgb(255 255 255 / .03); }

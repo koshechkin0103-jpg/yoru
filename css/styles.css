@@ -1,0 +1,539 @@
+/* YORU — первый экран и блок «Two sides matter».
+
+   Две раскладки:
+   • от 1200 px — композиция из макета. Геометрия (блоки, куртка, отступы) — в единицах макета u:
+     макет первого экрана 1440×720u, второго — 1440×700.5u; 1u = min(ширина/1440, высота/720),
+     поэтому на низких и широких окнах композиция уменьшается целиком и ничего не наезжает.
+     Координаты сняты с макета (@2x, делённые на 2);
+   • до 1200 px — телефон и планшет: элементы в колонку, сеткой.
+
+   Размеры текста — по методичке: clamp(пол, рост, потолок), в росте обязательно есть rem
+   (текст растёт при зуме и крупном системном шрифте). Опорные точки — наши, из макета:
+   на 1440 ровно размер макета, пол — читаемый минимум, потолок — двойной размер макета. */
+
+@font-face {
+  font-family: "Pixel";
+  src: url("../fonts/digital-upscaled-pixel.woff2?v=ca795961") format("woff2");   /* латиница, WOFF2 — 4 КБ вместо 160 */
+  font-display: swap;
+}
+@font-face {
+  font-family: "HeadingNow";
+  src: url("../fonts/heading-now-var.woff2?v=464df585") format("woff2");          /* латиница, WOFF2 — 0.2 МБ вместо 1 МБ */
+  font-weight: 100 1000;
+  font-stretch: 100% 1000%;
+  font-display: swap;
+}
+
+:root {
+  --edge: 20px;              /* поле от края экрана до контента — во всех блоках */
+  --bg: #0A0A0F;
+  --red: #B53031;
+  --red-text: #FF4A4A;      /* тот же красный, светлее: текстом (CART) на фоне с красными иероглифами иначе не читается */
+  --white: #FFFFFF;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+/* clip, а не hidden: hidden ломает position: sticky у вложенных элементов */
+html, body { max-width: 100%; overflow-x: clip; }
+body { margin: 0; background: var(--bg); color: var(--white); }
+img { display: block; }
+a { color: inherit; text-decoration: none; }
+ul, p, h1, h2, h3 { margin: 0; padding: 0; font-weight: normal; }
+ul { list-style: none; }
+[hidden] { display: none !important; }
+
+/* ---------- полотно страницы: один непрерывный фон под обоими экранами ---------- */
+.page {
+  container-type: inline-size;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  background: var(--bg) url("../img/bg-calligraphy.webp?v=f59d5cfa") center top / cover no-repeat;
+  overflow: clip;
+}
+.page > * {
+  --u: min(100cqw / 1440, 100svh / 720);
+
+  /* кегли композиции: 10 % роста в rem + 90 % от размера экрана; на 1440 — ровно макет.
+     Доля rem небольшая: на ширинах 1200–1440 текст не должен обгонять геометрию макета
+     (иначе подпись вылезает за красную плашку, а текст — за рамки карточек). Пол — на 1200 px. */
+  --fs-small: clamp(0.46875rem, calc(0.05625rem   + 8.1    * var(--u)), 1.125rem);   /* 7.5 / 9     / 18 */
+  --fs-nav:   clamp(0.5625rem,  calc(0.0703125rem + 10.125 * var(--u)), 1.40625rem); /* 9   / 11.25 / 22.5 */
+  --fs-title: clamp(0.9375rem,  calc(0.11875rem   + 17.1   * var(--u)), 2.375rem);   /* 15  / 19    / 38 */
+  --fs-btn:   clamp(1.125rem,   calc(0.1416875rem + 20.403 * var(--u)), 2.83375rem); /* 18  / 22.67 / 45 */
+  --fs-logo:  clamp(1.875rem,   calc(0.2416875rem + 34.803 * var(--u)), 4.83375rem); /* 30  / 38.67 / 77 */
+  --fs-h2:    clamp(2.1875rem,  calc(0.2625rem    + 37.8   * var(--u)), 5.25rem);    /* 35  / 42    / 84 — все заголовки блоков */
+  --fs-card:  clamp(0.78125rem, calc(0.09375rem   + 13.5   * var(--u)), 1.875rem);   /* 12.5 / 15    / 30 — названия в карточках */
+}
+
+/* ---------- HERO: не меньше высоты экрана ---------- */
+.hero { position: relative; min-height: 100vh; min-height: 100svh; }
+
+/* Рамки 1440×720u, прижатые к углам экрана; внутри — координаты макета.
+   Нижние элементы отсчитываются от низа (bottom), а не от верха — так они не уезжают
+   за край, когда в мобильном Safari меняется высота окна. */
+.frame { position: absolute; z-index: 2; width: calc(1440 * var(--u)); height: calc(720 * var(--u)); pointer-events: none; }
+.frame > * { position: absolute; pointer-events: auto; }
+.frame--tl { left: 0; top: 0; }
+.frame--tr { right: 0; top: 0; }
+.frame--bl { left: 0; bottom: env(safe-area-inset-bottom, 0px); }
+.frame--br { right: 0; bottom: env(safe-area-inset-bottom, 0px); }
+.frame--c  { left: calc(50% - 720 * var(--u)); top: calc(50% - 360 * var(--u)); z-index: 0; }
+
+/* Красные блоки: под курткой. Верх — у верха экрана, низ — у низа, между ними тянется левая колонка */
+.blocks { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.blocks svg { position: absolute; left: 0; width: calc(616 * var(--u)); display: block; }
+.blocks path { fill: var(--red); }
+.blocks__top    { top: 0;    height: calc(412.5 * var(--u)); }
+.blocks__bottom { bottom: 0; height: calc(307.5 * var(--u)); }
+.blocks__stretch {
+  position: absolute; left: 0; width: calc(50 * var(--u));
+  top: calc(412 * var(--u)); bottom: calc(307 * var(--u));   /* перехлёст 0.5u — без щелей на стыке */
+  background: var(--red);
+}
+
+/* ---------- шрифты ---------- */
+/* Пиксельный шрифт: кегль 9, интерлиньяж 18.75 (= 2.0833) — общий для наборного текста всего сайта */
+.tagline, .badge span, .hero__facts, .sides__lead, .card__text {
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-small);
+  line-height: 2.0833;
+  white-space: nowrap;
+}
+
+/* ---------- HERO ---------- */
+.logo { left: 0; top: 0; width: calc(245 * var(--u)); height: calc(60 * var(--u)); }
+.logo__mark {
+  position: absolute;
+  left: var(--edge);
+  top: calc(8.5 * var(--u));
+  width: calc(53.5 * var(--u));
+  height: auto;
+}
+.logo__word {
+  position: absolute;
+  left: calc(var(--edge) + 66.6 * var(--u));
+  top: calc(10.13 * var(--u));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-logo);
+  line-height: 1.0344;
+  font-variation-settings: "wght" 800, "wdth" 924;
+  white-space: nowrap;
+}
+
+.tagline { left: calc(275.5 * var(--u)); top: calc(11.3 * var(--u)); }
+
+/* Меню прижато к правому краю: если текст станет крупнее, пункты раздвигаются влево, а не наезжают */
+.nav {
+  left: auto; right: var(--edge); top: calc(20.69 * var(--u));
+  display: flex; gap: calc(23 * var(--u));
+}
+.nav__link {
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-nav);
+  line-height: 1.6;
+  white-space: nowrap;
+  transition: opacity .2s ease;
+}
+.nav__link:hover { opacity: .6; }
+.nav__link--cart { margin-left: calc(52.5 * var(--u)); color: var(--red-text); }   /* вместе с gap — 75.5u между CONTACTS и CART; CART — красным */
+/* на десктопе обёртка пунктов не влияет на раскладку, бургера нет */
+.nav__menu { display: contents; }
+.nav__burger { display: none; }
+
+/* Бейджи: текст и значок в одну строку; правый бейдж прижат к правому краю */
+.badge { top: calc(131.3 * var(--u)); display: flex; align-items: flex-start; }
+.badge__icon { flex: none; }
+.badge--limit { left: var(--edge); gap: calc(15.5 * var(--u)); }
+.badge--limit .badge__icon { width: calc(28.5 * var(--u)); margin-top: calc(4.7 * var(--u)); }
+.badge--ships { right: var(--edge); gap: calc(15.6 * var(--u)); }
+.badge--ships .badge__icon { width: calc(25.5 * var(--u)); margin-top: calc(2.7 * var(--u)); }
+
+/* Заголовок отсчитывается от низа: если текст вырастет, он растёт вверх, а не на кнопки */
+.hero__title {
+  left: calc(var(--edge) - 0.4 * var(--u));
+  bottom: calc(88.46 * var(--u));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-title);
+  line-height: 1.8947;
+  letter-spacing: -0.016em;
+  white-space: nowrap;
+}
+
+.hero__actions { left: 0; bottom: 0; }
+.btn {
+  position: absolute;
+  bottom: calc(30 * var(--u));
+  height: calc(36.5 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-btn);
+  line-height: 1;
+  font-variation-settings: "wght" 500, "wdth" 349;
+  border-radius: calc(2 * var(--u));
+  white-space: nowrap;
+}
+.btn--light {
+  left: var(--edge); width: calc(147.5 * var(--u));
+  background: var(--white); color: var(--bg);
+}
+.btn--dark {
+  left: calc(var(--edge) + 159.75 * var(--u)); width: calc(151.5 * var(--u));
+  background: var(--bg); color: var(--white);
+  border: max(1px, calc(0.75 * var(--u))) solid var(--white);
+}
+/* Ховер — мгновенная инверсия, без теней и увеличения */
+.btn--light:hover { background: var(--bg); color: var(--white); box-shadow: inset 0 0 0 max(1px, calc(0.75 * var(--u))) var(--white); }
+.btn--dark:hover  { background: var(--white); color: var(--bg); }
+.btn:focus-visible, .nav__link:focus-visible, .logo:focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
+
+/* «Two shells · Turn it inside out · Zero print» — строкой у правого нижнего угла */
+.hero__facts {
+  left: auto; right: calc(var(--edge) + 0.5 * var(--u)); bottom: calc(29.7 * var(--u));
+  display: flex; gap: calc(23.1 * var(--u));
+}
+
+/* ---------- ВТОРОЙ ЭКРАН: не меньше высоты окна, композиция 1440×700.5u по центру ---------- */
+.sides-screen {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+}
+.sides {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  width: calc(1440 * var(--u));
+  height: calc(700.5 * var(--u));
+  margin: 0 auto;
+  --g: calc((100cqw - 1440 * var(--u)) / 2);   /* поле между рамкой композиции и краем экрана */
+}
+.sides > * { position: absolute; }
+.sides__title {
+  left: calc(var(--edge) - 0.25 * var(--u) - var(--g));
+  top: calc(74.77 * var(--u));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-h2);
+  line-height: 1.0893;
+  font-variation-settings: "wght" 800, "wdth" 785;
+  white-space: nowrap;
+}
+.sides__lead {
+  left: calc(var(--edge) - var(--g));
+  top: calc(188.675 * var(--u));
+  line-height: 2.0833;
+}
+
+.cards { left: 0; top: 0; width: 100%; }
+.card {
+  position: absolute;
+  right: calc(var(--edge) - var(--g));
+  width: calc(481.5 * var(--u));
+  border: max(1px, calc(0.75 * var(--u))) solid var(--white);
+  border-radius: calc(5 * var(--u));
+}
+.card--1 { top: calc(75 * var(--u));    height: calc(114 * var(--u)); }
+.card--2 { top: calc(204 * var(--u));   height: calc(125 * var(--u)); }
+.card--3 { top: calc(344.5 * var(--u)); height: calc(132.5 * var(--u)); }
+.card--4 { top: calc(492 * var(--u));   height: calc(132.5 * var(--u)); }
+/* отступы считаются от внешнего края рамки */
+.card__title, .card__text { position: absolute; margin-left: calc(-0.75 * var(--u)); margin-top: calc(-0.75 * var(--u)); }
+.card__title {
+  left: calc(22.5 * var(--u));
+  top: calc(21.45 * var(--u));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-card);
+  line-height: 1.2;
+  font-variation-settings: "wght" 800, "wdth" 865;
+  white-space: nowrap;
+}
+.card__text { left: calc(22.5 * var(--u)); top: calc(54.8 * var(--u)); }
+
+/* ---------- куртка ---------- */
+/* Якоря задают, где куртка стоит на первом экране и во втором блоке (JS берёт координаты отсюда).
+   Пропорции якорей одинаковые: 3236 : 2012 — общий контур кадров hero и flip. */
+.jacket-anchor { position: absolute; pointer-events: none; }
+.jacket-anchor--hero {
+  left: calc(225.39 * var(--u)); top: calc(76.27 * var(--u));
+  width: calc(1011.25 * var(--u)); height: calc(628.75 * var(--u));
+}
+.jacket-anchor--sides {
+  left: calc(82.44 * var(--u)); top: calc(162.12 * var(--u));
+  width: calc(906.08 * var(--u)); height: calc(563.36 * var(--u));
+}
+.jacket-static { position: absolute; display: none; max-width: none; }
+.jacket-anchor--hero .jacket-static  { left: 30.28%; top: 0.40%; width: 64.52%; height: 97.02%; }
+.jacket-anchor--sides .jacket-static { left: 0;      top: 0;     width: 100%;   height: 95.23%; }
+
+.jacket {
+  position: absolute;
+  z-index: 1;
+  left: 0; top: 0; width: 0; height: 0;       /* ставится из JS по якорю первого экрана */
+  transform-origin: 0 0;
+  will-change: transform;
+  pointer-events: none;
+}
+.jacket__canvas { display: block; width: 100%; height: 100%; }
+
+/* Запасной режим: телефоны и планшеты, устройства без наведения, prefers-reduced-motion.
+   Секвенции не грузятся, куртки статичные. */
+.is-static .jacket { display: none; }
+.is-static .jacket-static { display: block; }
+
+/* ======================================================================
+   ДО 1200 px — телефон и планшет. Макет — «мобилка пример» (Figma, экран 393 px).
+   Кегли телефона — общие переменные --m-* (ниже), на 393 px — ровно макет, на планшете чуть крупнее.
+   ====================================================================== */
+@media (max-width: 1199.98px) {
+  :root {
+    --m-gap:  10px;                                              /* поля по краям */
+    --m-h:    clamp(2.5rem,   calc(2.1rem + 1.6vw), 3.5rem);     /* 40 — заголовки блоков (HeadingNow XWide Medium) */
+    --m-lh:   1.05;                                              /* 42 / 40 */
+    --m-name: clamp(1.25rem,  calc(1.05rem + 0.8vw), 1.75rem);   /* 20 — названия в карточках */
+    --m-text: clamp(0.5625rem, calc(0.45rem + 0.45vw), 0.75rem); /* 9 — наборный текст (пиксельный) */
+    --m-tlh:  2.3333;                                            /* 21 / 9 */
+    --m-hero: clamp(1.4375rem, calc(1.15rem + 1.17vw), 2rem);    /* 23 — заголовок первого экрана (пиксельный) */
+    --m-btn:  clamp(1.875rem, calc(1.5rem + 1.53vw), 2.5rem);    /* 30 — кнопки */
+    --m-logo: clamp(1.75rem,  calc(1.4rem + 1.43vw), 2.25rem);   /* 28 — логотип */
+    --m-nav:  0.6875rem;                                         /* 11 — CART, MENU */
+  }
+  .page { container-type: normal; }
+  .page > * {
+    --u: calc(min(100vw, 720px) / 620);
+    --gap: var(--m-gap);
+    --fs-logo:  var(--m-logo);
+    --fs-nav:   var(--m-nav);
+    --fs-small: var(--m-text);
+    --fs-title: var(--m-hero);
+    --fs-btn:   var(--m-btn);
+    --fs-h2:    var(--m-h);
+    --fs-card:  var(--m-name);
+  }
+  /* красных пиксельных плашек в мобильном макете нет */
+  .blocks { display: none; }
+
+  /* --- первый экран --- */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto minmax(300px, 1fr) auto auto;
+    grid-template-areas: "logo logo" "tag tag" ". badge" "jacket jacket" "title title" "actions actions";
+    padding: 22px var(--gap) calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  .frame { display: contents; }
+  .frame > * { position: relative; z-index: 2; left: auto; right: auto; top: auto; bottom: auto; min-width: 0; }
+
+  .logo { grid-area: logo; display: flex; justify-self: start; align-items: center; gap: 10px; width: auto; height: auto; margin-left: 2px; }
+  .logo__mark, .logo__word { position: static; }
+  .logo__mark { width: 40px; }
+  .logo__word { font-size: var(--m-logo); line-height: 1; letter-spacing: -0.2px; font-variation-settings: "wght" 710, "wdth" 1000; }
+
+  /* справа в строке логотипа — CART и MENU; пункты меню — на весь экран по нажатию на MENU */
+  .nav { grid-area: logo; justify-self: end; align-self: center; z-index: 60; display: flex; align-items: center; gap: 18px; }
+  .nav__link { font-size: var(--m-nav); line-height: 1.5; }
+  .nav__link--cart { margin: 0; }
+  .nav__burger {
+    display: block; order: 2;   /* MENU — у самого края, CART левее */
+    padding: 6px 0; border: 0; background: none; color: var(--white); cursor: pointer;
+    font-family: "Pixel", monospace; font-size: var(--m-nav); line-height: 1.5;
+  }
+  .nav__burger:focus-visible { outline: 1px solid var(--white); outline-offset: 2px; }
+  .nav__menu {
+    position: fixed; inset: 0; z-index: -1;   /* под MENU и CART */
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px;
+    padding: 96px var(--gap) calc(48px + env(safe-area-inset-bottom, 0px));
+    background: var(--bg) url("../img/noise.webp?v=94dc0e2c") 0 0 / 256px 256px repeat;
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s ease, visibility 0s linear .3s;
+  }
+  .nav--open .nav__menu { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+  .nav__menu .nav__link {
+    font-family: "HeadingNow", sans-serif;
+    font-size: var(--m-h);
+    line-height: var(--m-lh);
+    font-variation-settings: "wght" 550, "wdth" 830;
+  }
+  .menu-open { overflow: hidden; }
+  .menu-open .page { z-index: 100; }
+
+  .tagline { grid-area: tag; margin-top: 12px; max-width: 299px; line-height: var(--m-tlh); white-space: normal; text-wrap: pretty; }
+  .tagline br { display: none; }
+
+  /* бейдж справа: «SHIPS FROM TOKYO…» и «200 PER MODEL ONLY…» сменяют друг друга (js/badge.js) */
+  .badge { grid-area: badge; position: relative; display: flex; align-items: center; gap: 22px; margin-top: 20px; }
+  .badge span { line-height: var(--m-tlh); text-transform: uppercase; }
+  .badge--limit { flex-direction: row-reverse; justify-content: flex-end; }
+  .badge--limit .badge__icon, .badge--ships .badge__icon { width: 23px; height: auto; margin: 0; }
+  .badge--limit:not(.is-shown) { display: none; }   /* без скрипта — только «SHIPS…» */
+  .badge-swap .badge--ships:not(.is-shown) { display: none; }
+
+  /* куртка: крупно, по центру экрана, заходит за края; летит позади заголовка и кнопок */
+  /* вне потока сетки (иначе широкий якорь раздвигает колонки): по центру своей строки, шире экрана */
+  .frame--c .jacket-anchor--hero {
+    grid-area: jacket; z-index: 1;
+    position: absolute;
+    --jw: min(144vw, 900px);                 /* на телефоне — шире экрана, на планшете не больше 900 px */
+    width: var(--jw); height: calc(var(--jw) * 2012 / 3236); max-width: none;
+    left: calc(50% - var(--jw) * 0.625);     /* в кадре куртка стоит на 62.5 % ширины — так её центр по центру экрана */
+    top: calc(50% - var(--jw) * 1006 / 3236);
+  }
+  .jacket-anchor .jacket-static { left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; }
+  .jacket-anchor--hero .jacket-static { left: 30.28%; top: 0.40%; width: 64.52%; height: 97.02%; }
+
+  .hero__title { grid-area: title; margin-top: 8px; font-size: var(--m-hero); line-height: 1.913; letter-spacing: 0; text-transform: uppercase; white-space: normal; }
+  .hero__title br { display: none; }
+  .hero__actions { grid-area: actions; display: flex; flex-direction: column; gap: 15px; margin-top: 12px; }
+  .btn { position: relative; bottom: auto; left: auto; width: 100%; height: 49px; padding: 0; border-radius: 3px; font-size: var(--m-btn); font-variation-settings: "wght" 500, "wdth" 358; }
+  .btn--dark { border-width: 1px; }
+  .hero__facts { display: none; }
+
+  /* --- второй экран --- */
+  .sides-screen { display: block; }
+  .sides { width: auto; height: auto; margin: 0; padding: 73px var(--gap) 56px; display: flex; flex-direction: column; }
+  .sides > * { position: relative; left: auto; right: auto; top: auto; }
+  .sides__title { font-size: var(--m-h); line-height: var(--m-lh); font-variation-settings: "wght" 550, "wdth" 830; }
+  .sides__lead { margin-top: 14px; max-width: 360px; line-height: var(--m-tlh); white-space: normal; text-wrap: pretty; }
+  /* раскрытая куртка во всю ширину и чуть за края, как в макете */
+  .jacket-anchor--sides { --sw: min(112vw, 700px); width: var(--sw); height: auto; aspect-ratio: 3236 / 2012; margin: 24px 0 0 calc((100% - var(--sw)) / 2); max-width: none; }
+  .cards { position: relative; display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 24px; }
+  .card { position: relative; left: auto; right: auto; top: auto; width: 100%; height: auto; padding: 20px; border-width: 1px; border-radius: 6px; }
+  .card__title, .card__text { position: static; margin: 0; }
+  .card__title { font-size: var(--m-name); line-height: 1; font-variation-settings: "wght" 550, "wdth" 830; }
+  .card__text { margin-top: 18px; max-width: 332px; line-height: var(--m-tlh); white-space: normal; text-wrap: pretty; }
+  .card__text br, .sides__lead br { display: none; }
+}
+
+/* планшет: карточки сеткой 2×2 */
+@media (min-width: 600px) and (max-width: 1199.98px) {
+  .cards { grid-template-columns: 1fr 1fr; }
+}
+
+/* Плавная прокрутка Lenis (js/main.js) — только на десктопе */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* Пиксельный набор текста (js/typing.js): буквы появляются по одной — белый квадрат, затем буква.
+   До набора буквы скрыты, но место занимают — текст не «прыгает». */
+.px { font-style: normal; }
+.badge .px, .typing .px { opacity: 0; }
+.badge .px.is-on, .typing .px.is-on { opacity: 1; }
+.badge .px.is-block, .typing .px.is-block { opacity: 1; color: transparent; background: var(--white); }
+
+/* ======================================================================
+   ШАПКА .topbar — страницы магазина и закреплённая шапка главной (.topbar--float)
+   ====================================================================== */
+.topbar { --s-gap: var(--edge); --s-nav: clamp(0.5625rem, 0.78125vw, 1.40625rem); }
+@media (max-width: 1199.98px) { .topbar { --s-gap: var(--m-gap); --s-nav: var(--m-nav); } }
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--s-gap);
+  background: linear-gradient(#0A0A0F, rgb(10 10 15 / .85) 70%, rgb(10 10 15 / 0));
+}
+.topbar__logo { display: flex; align-items: center; gap: 0.33em; color: #fff; text-decoration: none; font-size: clamp(1.75rem, 2.686vw, 4.83375rem); }
+.topbar__logo img { width: 1.38em; height: auto; }
+.topbar__logo span { font-family: "HeadingNow", sans-serif; line-height: 1; font-variation-settings: "wght" 800, "wdth" 924; }
+.topbar__nav { display: flex; align-items: center; gap: 23px; }
+.topbar__links { display: contents; }
+.topbar__nav a, .topbar__menu {
+  color: #fff; text-decoration: none;
+  font-family: "Pixel", monospace; font-size: var(--s-nav); line-height: 1.6;
+  transition: opacity .2s ease;
+}
+.topbar__nav a:hover { opacity: .6; }
+.topbar__cart { margin-left: 52px; }
+.topbar__nav .topbar__cart { color: var(--red-text); }   /* CART — красным, как в шапке первого экрана */
+.topbar__menu { display: none; padding: 6px 0; border: 0; background: none; cursor: pointer; }
+.topbar a:focus-visible, .topbar__menu:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+
+@media (max-width: 1199.98px) {
+  .topbar { padding: 22px var(--s-gap) 14px; }
+  .topbar__logo { font-size: var(--m-logo); gap: 10px; }
+  .topbar__logo img { width: 40px; }
+  .topbar__logo span { letter-spacing: -0.2px; font-variation-settings: "wght" 710, "wdth" 1000; }
+  .topbar__nav { gap: 18px; }
+  .topbar__cart { margin-left: 0; }
+  .topbar__menu { display: block; order: 2; z-index: 2; }
+  .topbar__cart { z-index: 2; }
+  .topbar__links {
+    position: fixed; inset: 0; z-index: 1;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px;
+    padding: 96px var(--s-gap) 48px;
+    background: #0A0A0F url("../img/noise.webp?v=94dc0e2c") 0 0 / 256px 256px repeat;
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s ease, visibility 0s linear .3s;
+  }
+  .topbar--open .topbar__links { opacity: 1; visibility: visible; transition: opacity .3s ease; }
+  .topbar__links a { font-family: "HeadingNow", sans-serif; font-size: var(--m-h); line-height: var(--m-lh); font-variation-settings: "wght" 550, "wdth" 830; }
+  .bar-open { overflow: hidden; }
+}
+
+/* главная: шапка закреплена сверху, скрыта при прокрутке вниз, появляется при прокрутке вверх (js/shop.js) */
+.topbar--float {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 90;
+  transform: translateY(-110%); visibility: hidden;
+  transition: transform .35s cubic-bezier(.2, .7, .2, 1), visibility 0s linear .35s;
+}
+.topbar--float.is-shown { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.2, .7, .2, 1); }
+
+/* Пиксельное появление фото (js/pixel-reveal.js): сетка квадратов цвета фона поверх фото,
+   квадраты исчезают в случайном порядке. До появления — сплошной слой фона. */
+.pxr {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  overflow: hidden; border-radius: inherit;
+  background: #0A0A0F url("../img/noise.webp?v=94dc0e2c") 0 0 / 256px 256px repeat;
+}
+.pxr--grid { background: none; }
+.pxr canvas { display: block; width: 100%; height: 100%; }   /* квадраты рисует js/pixel-reveal.js */
+
+/* ======================================================================
+   ПРЕЛОУДЕР (js/preloader.js) — только при первом заходе за сеанс: класс .intro на <html> ставит скрипт в <head>.
+   Красные пиксели заливают экран сверху вниз → знак, полоса и счётчик загрузки → набирается «YORU» →
+   пиксели уходят снизу вверх, сквозь них проступает первый экран.
+   ====================================================================== */
+.preloader { display: none; }
+.intro, .intro body { overflow: hidden; }   /* пока идёт заставка, страница не прокручивается */
+.intro .preloader {
+  display: block; position: fixed; inset: 0; z-index: 1000;
+  background: #0A0A0F url("../img/noise.webp?v=94dc0e2c") 0 0 / 256px 256px repeat;
+  color: #fff;
+}
+.preloader.is-full { background: none; }    /* экран залит пикселями — фон больше не нужен (при уходе сквозь пиксели виден сайт) */
+.preloader__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.preloader__center {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+  opacity: 0; transition: opacity .3s ease;
+}
+.preloader__logo { display: flex; align-items: center; font-size: clamp(1.875rem, 2.686vw, 4.83375rem); line-height: 1; }
+.preloader__mark { width: 1.38em; height: auto; }
+.preloader__word {   /* сначала свёрнуто — знак по центру; на 100 % раскрывается и набирается по буквам */
+  display: inline-block; overflow: hidden; max-width: 0; margin-left: 0;
+  font-family: "HeadingNow", sans-serif; font-variation-settings: "wght" 800, "wdth" 924;
+  white-space: nowrap;
+  transition: max-width .45s cubic-bezier(.2, .7, .2, 1), margin-left .45s cubic-bezier(.2, .7, .2, 1);
+}
+/* на этапе логотипа буквы уже скрыты до набора — обрезка не нужна (иначе срезается выступающий край «Y») */
+.preloader.is-logo .preloader__word { max-width: 4em; margin-left: 0.33em; overflow: visible; }
+.preloader__bar { width: 160px; height: 1px; background: rgb(255 255 255 / .3); transition: opacity .3s ease; }
+.preloader__bar i { display: block; height: 100%; background: #fff; transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+.preloader__count {
+  position: absolute; right: var(--edge); bottom: var(--edge); margin: 0;
+  font-family: "Pixel", monospace; font-size: clamp(3rem, 6.5vw, 7.5rem); line-height: 0.8;
+  opacity: 0; transition: opacity .3s ease;
+}
+.preloader.is-ui .preloader__center, .preloader.is-ui .preloader__count { opacity: 1; }
+.preloader.is-logo .preloader__bar, .preloader.is-logo .preloader__count { opacity: 0; }
+.preloader.is-out .preloader__center { opacity: 0; }
+@media (max-width: 1199.98px) {
+  .preloader__logo { font-size: var(--m-logo); }
+  .preloader__count { right: var(--m-gap); bottom: calc(var(--m-gap) + env(safe-area-inset-bottom, 0px)); font-size: clamp(3rem, 14vw, 5rem); }
+}
+

@@ -1,0 +1,328 @@
+/* YORU — путь после второго экрана: горизонтальный слайдер → поле с куртками → блок «Models from the new collection».
+   Подключается после css/styles.css (шрифты, цвета, сброс).
+
+   Десктоп (от 1200 px, мышь): секция «прилипает» к экрану, прокрутка вниз двигает ленту влево:
+   три слайда на весь экран, затем поле с куртками (параллакс); в поле едет карточка — уменьшенная
+   копия блока моделей, — встаёт по центру и вырастает до всего экрана.
+   Телефон и планшет (до 1200 px): всё друг под другом, куртки появляются при прокрутке.
+
+   Размеры — в единицах макетов, пересчитанных в сетку 1440:
+   слайды — макет 1706×960 (×0.8441), блок моделей — макет 1920×1060 (×0.75).
+   Кегли — clamp с долей rem 10 %, как в первых экранах. */
+
+/* шум — нижний слой всего сайта: то же «зерно», что вшито в фоны первых экранов */
+html, body { background: #0A0A0F url("../img/noise.webp?v=94dc0e2c") 0 0 / 256px 256px repeat; }
+
+/* Ширина секции — контейнер для единиц, как .page в первых экранах: 100vw в Windows включает полосу прокрутки */
+.journey { position: relative; color: #fff; container-type: inline-size; }
+.journey > * {
+  --u:  min(100cqw / 1440, 100svh / 720);   /* слайды и поле */
+  --um: min(100cqw / 1440, 100svh / 795);   /* блок моделей (макет выше: 1440×795) */
+
+  --fs-small: clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--u)), 1.125rem);       /*  7.5 / 9     / 18 */
+  --fs-slide: clamp(2.1875rem, calc(0.2625rem + 37.8 * var(--u)), 5.25rem);         /* 35  / 42    / 84 — все заголовки блоков */
+
+  --fs-msmall: clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--um)), 1.125rem);     /*  7.5 / 9    / 18 */
+  --fs-tiny:   clamp(0.4167rem, calc(0.05rem + 7.2 * var(--um)), 1rem);             /*  6.7 / 8    / 16 — мелкие подписи */
+  --fs-mtitle: clamp(2.1875rem, calc(0.2625rem + 37.8 * var(--um)), 5.25rem);       /* 35  / 42    / 84 */
+  --fs-name:   clamp(0.78125rem, calc(0.09375rem + 13.5 * var(--um)), 1.875rem);    /* 12.5 / 15   / 30 */
+  --fs-price:  clamp(0.75rem, calc(0.09rem + 12.96 * var(--um)), 1.8rem);           /* 12  / 14.4  / 28.8 */
+  --fs-mbtn:   clamp(1.125rem, calc(0.1416875rem + 20.403 * var(--um)), 2.83375rem); /* 18 / 22.67 / 45 */
+}
+
+/* ---------- слайды ---------- */
+.slide { position: relative; overflow: hidden; background: #0A0A0F; height: 100vh; height: 100svh; }   /* без анимации — в потоке, на высоту экрана */
+.slide__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* Размытие только под текстом: сам текстовый блок размывает фото под собой (backdrop-filter).
+   Вокруг текста — запас --fx / --fy (padding, съеденный отрицательным margin, — текст стоит на месте),
+   в этом запасе размытие плавно сходит на нет: маска-рамка из img/feather.svg (9 частей, края — гаусс).
+   Маска из двух пересечённых градиентов не годится: с ней Chrome перестаёт размывать фон.
+   (Пробовали заранее размытую копию фото под текстом — на компьютере сцена со слайдами стала тяжелее.) */
+.slide__meta, .slide__title {
+  padding: var(--fy) var(--fx);
+  margin: calc(-1 * var(--fy)) calc(-1 * var(--fx));
+  -webkit-backdrop-filter: blur(var(--blur));
+          backdrop-filter: blur(var(--blur));
+  -webkit-mask-box-image: url("../img/feather.svg?v=86adee8d") 50 / var(--fy) var(--fx) stretch;
+}
+@supports not (-webkit-mask-box-image: none) {   /* Firefox: та же рамка из двух градиентов */
+  .slide__meta, .slide__title {
+    mask-image:
+      linear-gradient(to right, transparent, #000 var(--fx), #000 calc(100% - var(--fx)), transparent),
+      linear-gradient(to bottom, transparent, #000 var(--fy), #000 calc(100% - var(--fy)), transparent);
+    mask-composite: intersect;
+  }
+}
+.slide__meta  { --fx: calc(44 * var(--u)); --fy: calc(24 * var(--u)); --blur: calc(12 * var(--u)); }
+.slide__title { --fx: calc(56 * var(--u)); --fy: calc(40 * var(--u)); --blur: calc(12 * var(--u)); }
+.slide__meta {
+  position: absolute;
+  left: var(--edge);
+  top: calc(26.18 * var(--u));
+  display: flex; flex-wrap: wrap; gap: 0 1.6em;
+  list-style: none;
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-small);
+  line-height: 2.0833;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.slide__title {
+  position: absolute;
+  left: var(--edge);
+  bottom: calc(23.6 * var(--u) + env(safe-area-inset-bottom, 0px));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-slide);
+  line-height: 1.0893;
+  font-variation-settings: "wght" 800, "wdth" 785;
+  font-weight: normal;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- поле с куртками ---------- */
+.field { position: relative; overflow: hidden; background: #0A0A0F url("../img/field/bg.webp?v=1c23796c") center / cover no-repeat; }
+.field__jacket { position: absolute; display: block; height: auto; pointer-events: none; will-change: transform; }
+
+/* ---------- блок моделей ---------- */
+.models {
+  position: relative;
+  background: #0A0A0F url("../img/noise.webp?v=94dc0e2c") 0 0 / 256px 256px repeat;
+}
+.models__frame { position: relative; width: calc(1440 * var(--um)); height: calc(795 * var(--um)); margin: 0 auto;
+  --g: calc((100cqw - 1440 * var(--um)) / 2); }   /* поле между рамкой и краем экрана: края контента — в 20 px от экрана */
+.models__frame > * { position: absolute; }
+.models__title {
+  left: calc(var(--edge) + 0.75 * var(--um) - var(--g));
+  top: calc(76.2 * var(--um));
+  margin: 0;
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-mtitle);
+  line-height: 1.0893;
+  font-variation-settings: "wght" 800, "wdth" 785;
+  font-weight: normal;
+  white-space: nowrap;
+}
+.models__lead {
+  right: calc(var(--edge) + 0.75 * var(--um) - var(--g));
+  top: calc(75.7 * var(--um));
+  margin: 0;
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-msmall);
+  line-height: 2.0833;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.lot {
+  top: calc(225 * var(--um));
+  width: calc((100cqw - 2 * var(--edge) - 15 * var(--um)) / 2);   /* две карточки от края до края экрана, между ними 15u */
+  height: calc(495 * var(--um));
+  border: max(1px, calc(0.75 * var(--um))) solid #fff;
+  border-radius: calc(3 * var(--um));
+}
+.lot--left  { left: calc(var(--edge) - var(--g)); }
+.lot--right { right: calc(var(--edge) - var(--g)); }
+.lot > * { position: absolute; margin: 0; }
+.lot__num, .lot__badge {
+  top: calc(27.2 * var(--um));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-tiny);
+  line-height: 1.6;
+  color: var(--red, #B53031);
+  white-space: nowrap;
+}
+.lot__num   { left: calc(21.45 * var(--um)); }
+.lot__badge { right: calc(24 * var(--um)); }
+.lot__price {
+  right: calc(23.75 * var(--um));
+  top: calc(59.7 * var(--um));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-price);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* фото куртки: лента из 5 кадров, сдвигается целиком — как свайп */
+.lot__view {
+  left: calc(50% - 262.75 * var(--um));   /* как в макете: на 24.25u правее середины карточки */
+  top: calc(22 * var(--um));
+  width: calc(574 * var(--um));
+  height: calc(356 * var(--um));
+  overflow: hidden;
+}
+.lot__strip { display: flex; width: 100%; height: 100%; transition: transform .6s cubic-bezier(.65, 0, .35, 1); }
+.lot__strip img { flex: none; width: 100%; height: 100%; object-fit: contain; }
+
+/* квадратики: активный красный, остальные белые */
+.lot__dots { left: calc(22.5 * var(--um)); top: calc(195 * var(--um)); display: flex; flex-direction: column; gap: calc(7.5 * var(--um)); padding: 0; list-style: none; }
+.lot__dot {
+  display: block;
+  width: calc(11.25 * var(--um)); height: calc(11.25 * var(--um));
+  padding: 0; border: 0; border-radius: 0;
+  background: #fff; cursor: pointer;
+  transition: background-color .2s ease;
+}
+.lot__dot[aria-current="true"] { background: var(--red, #B53031); cursor: default; }
+.lot__dot:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+/* увеличенная зона нажатия, без изменения вида */
+.lot__dot { position: relative; }
+.lot__dot::after { content: ""; position: absolute; inset: -6px; }
+
+.lot__name {
+  left: calc(23.5 * var(--um));
+  top: calc(396.2 * var(--um));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-name);
+  line-height: 1.2;
+  font-variation-settings: "wght" 800, "wdth" 865;
+  font-weight: normal;
+  white-space: nowrap;
+}
+.lot__desc {
+  left: calc(21.5 * var(--um));
+  top: calc(434.7 * var(--um));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-msmall);
+  line-height: 2.0833;
+  white-space: nowrap;
+}
+.lot__btn {
+  right: calc(49.5 * var(--um));
+  top: calc(435 * var(--um));
+  width: calc(147.75 * var(--um));
+  height: calc(36 * var(--um));
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; color: #0A0A0F;
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-mbtn);
+  line-height: 1;
+  font-variation-settings: "wght" 500, "wdth" 349;
+  border-radius: calc(2 * var(--um));
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lot__btn:hover { background: #0A0A0F; color: #fff; box-shadow: inset 0 0 0 max(1px, calc(0.75 * var(--um))) #fff; }
+.lot__btn:focus-visible { outline: 1px solid #fff; outline-offset: 3px; }
+
+/* ======================================================================
+   ДЕСКТОП С АНИМАЦИЕЙ (класс .journey--pinned ставит js/journey.js)
+   ====================================================================== */
+.journey--pinned { height: 100vh; height: 100svh; overflow: hidden; }
+.journey--pinned .journey__track { position: absolute; left: 0; top: 0; height: 100%; display: flex; will-change: transform; }
+.journey--pinned .slide { flex: none; width: 100cqw; height: 100%; transform-origin: 100% 50%; }
+.journey--pinned .field { flex: none; height: 100%; }
+/* блок моделей лежит поверх уменьшенной копией (карточка в поле) и вырастает до всего экрана.
+   Без will-change: иначе браузер растрирует текст в мелком масштабе и при увеличении он мылится */
+.journey--pinned .models {
+  position: absolute; inset: 0; z-index: 3;
+  transform-origin: 50% 50%;
+  box-shadow: 0 0 0 var(--outline, 0px) rgb(255 255 255 / .16);
+}
+/* тень «поднятой» карточки — отдельный слой: меняется только его прозрачность, а не размытие 120 px в каждом кадре */
+.journey--pinned .models::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border-radius: inherit;
+  box-shadow: 0 40px 120px rgb(0 0 0 / .6);
+  opacity: var(--lift, 0);
+}
+.journey--pinned .models__frame { top: 50%; transform: translateY(-50%); }
+.journey--pinned .models:not(.is-open) .models__frame { pointer-events: none; }
+
+/* ======================================================================
+   ДО 1200 px — телефон и планшет: всё друг под другом (макет «мобилка пример», кегли --m-* из styles.css)
+   ====================================================================== */
+@media (max-width: 1199.98px) {
+  .journey > * {
+    --gap: var(--m-gap);
+    --fs-slide: var(--m-h);
+    --fs-small: var(--m-text);
+    --fs-mtitle: var(--m-h);
+    --fs-msmall: var(--m-text);
+    --fs-tiny: 0.75rem;
+    --fs-name: var(--m-name);
+    --fs-price: clamp(1.125rem, calc(1rem + 0.5vw), 1.375rem);
+    --fs-mbtn: var(--m-btn);
+  }
+
+  /* фото слайдера — стопкой: каждое встаёт у верха экрана, следующее наезжает на него сверху */
+  .journey__slides { display: block; position: relative; }
+  .slide { position: sticky; top: 0; height: 100svh; min-height: 480px; }
+  /* текст и размытие под ним — только по ширине самого текста */
+  .slide__meta {
+    left: var(--gap); right: auto; top: calc(var(--gap) + 12px);
+    flex-direction: column; gap: 0;
+    line-height: var(--m-tlh); white-space: nowrap;
+    --fx: 14px; --fy: 8px; --blur: 5px;
+  }
+  .slide__title {
+    left: var(--gap); right: auto; bottom: calc(var(--gap) + 16px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100% - 2 * var(--gap));
+    line-height: var(--m-lh); white-space: nowrap;
+    font-variation-settings: "wght" 550, "wdth" 830;
+    --fx: 16px; --fy: 12px; --blur: 6px;
+  }
+
+  .models { padding: 56px var(--gap); }
+  .models__frame { width: auto; height: auto; display: flex; flex-direction: column; gap: 14px; }
+  .models__frame > * { position: relative; left: auto; right: auto; top: auto; }
+  .models__title { line-height: var(--m-lh); white-space: normal; font-variation-settings: "wght" 550, "wdth" 830; }
+  .models__lead { text-align: left; line-height: var(--m-tlh); white-space: normal; max-width: 360px; text-wrap: pretty; }
+  .models__lead br, .lot__desc br, .models__title br { display: none; }
+  .lot { position: relative; left: auto; right: auto; width: 100%; height: auto; padding: 20px; display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "num . badge" ". . price" "dots view view" "name name name" "desc desc desc" "btn btn btn"; gap: 8px 12px; border-width: 1px; border-radius: 6px; margin-top: 16px; }
+  .lot > * { position: relative; left: auto; right: auto; top: auto; }
+  .lot__num { grid-area: num; } .lot__badge { grid-area: badge; } .lot__price { grid-area: price; justify-self: end; }
+  .lot__dots { grid-area: dots; align-self: center; gap: 8px; }
+  .lot__dot { width: 12px; height: 12px; }
+  .lot__view { grid-area: view; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .lot__name { grid-area: name; margin-top: 8px; line-height: 1; font-variation-settings: "wght" 550, "wdth" 830; }
+  .lot__desc { grid-area: desc; line-height: var(--m-tlh); white-space: normal; max-width: 360px; text-wrap: pretty; }
+  .lot__btn { grid-area: btn; position: relative; width: 100%; height: 49px; margin-top: 8px; border-radius: 3px; font-variation-settings: "wght" 500, "wdth" 358; }
+}
+
+/* на десктопе обёртки слайдов и сцены поля не влияют на раскладку, текст поля — только в сцене Depth Zoom */
+:where(.journey__slides, .field__stage) { display: contents; }   /* без веса: мобильные правила и сцена поля его перекрывают */
+:where(.field__text) { display: none; }
+
+/* Поле без анимации (экран без мыши от 1200 px, «уменьшить движение»):
+   куртки сеткой в два столбца, со сдвигом, и появляются при прокрутке */
+.journey:not(.journey--pinned) .field {
+  --gap: var(--edge);
+  min-height: 120svh; padding: 48px var(--gap);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px 12px; align-content: center;
+}
+.journey:not(.journey--pinned) .field__jacket {
+  position: relative; width: 100%; max-width: 560px; justify-self: center;
+  opacity: 0; transform: translateY(40px) scale(.94);
+  transition: opacity .8s ease, transform .8s cubic-bezier(.2, .7, .2, 1);
+}
+.journey:not(.journey--pinned) .field__jacket:nth-of-type(even) { margin-top: 30%; }
+.journey:not(.journey--pinned) .field__jacket.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .journey:not(.journey--pinned) .field__jacket { opacity: 1; transform: none; transition: none; }
+}
+
+/* Телефон и планшет с анимацией: сцена Depth Zoom (класс .field--depth ставит js/journey.js).
+   Поле высотой в 3.2 экрана, внутри — «прилипающая» сцена на весь экран с курткам и текстом по центру */
+.journey:not(.journey--pinned) .field.field--depth { display: block; align-content: normal; height: 320svh; min-height: 0; padding: 0; background: none; overflow: clip; }   /* hidden ломает «прилипание» сцены */
+.field--depth .field__stage {
+  display: block; position: sticky; top: 0; overflow: hidden;
+  /* высота — по экрану со спрятанными панелями браузера (lvh): иначе, когда панели уезжают при прокрутке,
+     под сценой открывалась пустая полоса (видно в Яндекс Браузере и Safari) */
+  height: 100svh; height: 100lvh;
+  background: #0A0A0F url("../img/field/bg.webp?v=1c23796c") center / cover no-repeat;
+}
+.field--depth .field__jacket { display: none; }
+.field__depth { position: absolute; left: 0; top: 0; height: auto; pointer-events: none; will-change: transform, opacity; }
+.field--depth:not(.is-active) .field__depth { visibility: hidden; will-change: auto; }   /* сцена не на экране */
+.field--depth .field__text {
+  display: block; position: absolute; z-index: 2;
+  left: var(--m-gap, 10px); right: var(--m-gap, 10px); top: 50%; translate: 0 -50%;
+  margin: 0; text-align: center; color: #fff;
+  font-family: "HeadingNow", sans-serif;    /* как все заголовки блоков на телефоне */
+  font-size: var(--m-h, 2.5rem);
+  line-height: var(--m-lh, 1.05);
+  font-variation-settings: "wght" 550, "wdth" 830;
+  text-transform: uppercase;
+  opacity: 0;
+}

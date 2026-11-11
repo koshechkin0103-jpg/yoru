@@ -1,0 +1,290 @@
+/* YORU — последние блоки: достижения, перебивка с формой подписки, футер.
+   Подключается после css/blocks.css (общие шрифты, цвета, появление .reveal).
+
+   Макет «КРАЙНИЕ БЛОКИ» — 2880 px (@2x), сетка 1440: все размеры — в u = ширина экрана / 1440.
+   Достижения — 1440×1455.5u, перебивка — 1440×575.5u, футер — 1440×408u.
+   Карточка формы лежит на перебивке и заходит на футер. До 1200 px — всё друг под другом. */
+
+.honors, .signup, .footer { position: relative; container-type: inline-size; }
+.honors > *, .signup > *, .footer > * {
+  --uw: calc(100cqw / 1440);
+
+  --fs-award:  clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--uw)), 1.125rem);     /*  7.5 / 9    / 18 */
+  --fs-note:   clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--uw)), 1.125rem);     /*  7.5 / 9    / 18 */
+  --fs-hlogo:  clamp(3.083rem, calc(0.37rem + 53.28 * var(--uw)), 7.4rem);          /* 49.3 / 59.2 / 118.4 */
+  --fs-stitle: clamp(2.1875rem, calc(0.2625rem + 37.8 * var(--uw)), 5.25rem);       /* 35  / 42    / 84 — все заголовки блоков */
+  --fs-slead:  clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--uw)), 1.125rem);     /*  7.5 / 9    / 18 */
+  --fs-sfield: clamp(0.4167rem, calc(0.05rem + 7.2 * var(--uw)), 1rem);             /*  6.7 / 8    / 16 — мелкие подписи */
+  --fs-snote:  clamp(0.4167rem, calc(0.05rem + 7.2 * var(--uw)), 1rem);             /*  6.7 / 8    / 16 — мелкие подписи */
+  --fs-flabel: clamp(0.46875rem, calc(0.05625rem + 8.1 * var(--uw)), 1.125rem);     /*  7.5 / 9    / 18 */
+  --fs-flink:  clamp(0.5625rem, calc(0.0703125rem + 10.125 * var(--uw)), 1.40625rem); /* 9  / 11.25 / 22.5 — как меню в шапке */
+  --fs-flogo:  clamp(1.875rem, calc(0.2416875rem + 34.803 * var(--uw)), 4.83375rem); /* 30  / 38.67 / 77 — как логотип в шапке */
+}
+
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ======================================================================
+   ДОСТИЖЕНИЯ: фото 1 по центру, 2 слева вверху, 3 справа внизу
+   ====================================================================== */
+.honors { color: #fff; overflow: clip; }   /* боковые фото при параллаксе не вылезают на перебивку */
+.honors__frame { position: relative; width: calc(1440 * var(--uw)); height: calc(1455.5 * var(--uw)); margin: 0 auto; }
+.honors__frame > * { position: absolute; margin: 0; }
+.honors__award, .honors__note {
+  font-family: "Pixel", monospace;
+  white-space: nowrap;
+}
+.honors__award {
+  right: calc(var(--edge) + 0.75 * var(--uw));
+  top: calc(78.21 * var(--uw));
+  font-size: var(--fs-award);
+  line-height: 2.0833;
+  text-align: right;
+}
+.honors__note {
+  left: var(--edge);
+  top: calc(1294.24 * var(--uw));
+  font-size: var(--fs-note);
+  line-height: 2.0833;
+}
+.honors__logo { left: 0; top: 0; width: 100%; height: 0; }
+.honors__mark { position: absolute; left: calc(538 * var(--uw)); top: calc(160 * var(--uw)); width: calc(85.5 * var(--uw)); height: auto; }
+.honors__word {
+  position: absolute;
+  left: calc(643.25 * var(--uw));
+  top: calc(163.7 * var(--uw));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-hlogo);
+  line-height: 1.0344;
+  font-variation-settings: "wght" 800, "wdth" 984;
+  white-space: nowrap;
+}
+.honors__photo { overflow: hidden; border-radius: calc(4 * var(--uw)); background: #15141a; }
+.honors__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.honors__photo--main  { left: calc(272 * var(--uw));  top: calc(274.5 * var(--uw)); width: calc(896 * var(--uw));   height: calc(1120.5 * var(--uw)); }
+.honors__photo--left  { left: var(--edge);   top: calc(150 * var(--uw));   width: calc(224.5 * var(--uw)); height: calc(240 * var(--uw)); }
+.honors__photo--right { right: var(--edge); top: calc(1116 * var(--uw));  width: calc(224 * var(--uw));   height: calc(240 * var(--uw)); }
+
+/* ======================================================================
+   ПЕРЕБИВКА (фото 4) И КАРТОЧКА ФОРМЫ
+   ====================================================================== */
+.signup { z-index: 2; }
+/* кадр как в макете: фото крупнее ширины экрана и сдвинуто — лицо и вышивка в полосе */
+.signup__photo { position: relative; height: calc(575.5 * var(--uw)); overflow: hidden; }
+.signup__photo img { position: absolute; left: calc(-114 * var(--uw)); top: calc(-64.5 * var(--uw)); width: calc(1554 * var(--uw)); height: auto; max-width: none; }
+.signup__card {
+  position: absolute;
+  right: var(--edge);
+  top: calc(259.5 * var(--uw));
+  width: calc(504 * var(--uw));
+  height: calc(576 * var(--uw));
+  margin: 0;
+  background: #0F0F0F;
+  border-radius: calc(8 * var(--uw));
+  color: #EFF0E9;
+  text-align: center;
+}
+.signup__card > * { position: absolute; left: 0; width: 100%; margin: 0; }
+.signup__title {
+  top: calc(40 * var(--uw));
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-stitle);
+  line-height: 1.0893;
+  font-variation-settings: "wght" 800, "wdth" 785;
+  font-weight: normal;
+  white-space: nowrap;
+}
+.signup__lead {
+  top: calc(195.2 * var(--uw));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-slead);
+  line-height: 2.0833;
+  color: #9B9C96;
+  white-space: nowrap;
+}
+.signup__field { left: calc(36 * var(--uw)); top: calc(257.5 * var(--uw)); width: calc(432 * var(--uw)); }
+.signup__input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(38.5 * var(--uw));
+  padding: 0 calc(13.5 * var(--uw));
+  border: 1px solid #2A2A2A;
+  border-radius: calc(4 * var(--uw));
+  background: #1A1A1A;
+  color: #EFF0E9;
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-sfield);
+  outline: none;
+  transition: border-color .2s ease;
+}
+.signup__input::placeholder { color: #76776F; opacity: 1; }
+.signup__input:focus { border-color: #76776F; }
+.signup__send {
+  left: calc(222 * var(--uw));
+  top: calc(347 * var(--uw));
+  width: calc(60 * var(--uw));
+  height: calc(60 * var(--uw));
+  display: grid; place-items: center;
+  padding: 0; border: 0; border-radius: 50%;
+  background: #B0B3AC; color: #0F0F0F;
+  cursor: pointer;
+  transition: background-color .2s ease, transform .2s ease;
+}
+.signup__send svg { width: calc(14 * var(--uw)); height: calc(14 * var(--uw)); overflow: visible; }
+.signup__send:hover { background: #EFF0E9; transform: scale(1.06); }
+.signup__send:focus-visible { outline: 1px solid #EFF0E9; outline-offset: 4px; }
+.signup__status {
+  top: calc(428 * var(--uw));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-snote);
+  line-height: 2;
+  color: #EFF0E9;
+}
+.signup__status[data-state="error"] { color: #E0605F; }
+.signup__card::after {   /* тонкая линия над припиской */
+  content: "";
+  position: absolute;
+  left: calc(36 * var(--uw)); right: calc(36 * var(--uw));
+  top: calc(481.5 * var(--uw));
+  height: 1px;
+  background: rgb(255 255 255 / .1);
+}
+.signup__note {   /* шрифт и кегль — как строки «EMBROIDERED BOTH WAYS…» в Collections */
+  top: calc(503 * var(--uw));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-note);
+  line-height: 2.0833;
+  text-transform: uppercase;
+  color: #76776F;
+  white-space: nowrap;
+}
+
+/* ======================================================================
+   ФУТЕР — светлый, как в референсе
+   ====================================================================== */
+.footer { background: #EFF0E9; color: #0A0A0F; }
+.footer__frame { position: relative; width: calc(1440 * var(--uw)); height: calc(408 * var(--uw)); margin: 0 auto; }
+.footer__frame > * { position: absolute; margin: 0; }
+.footer__col { top: calc(32.84 * var(--uw)); }
+.footer__col--menu   { left: var(--edge); }
+.footer__col--social { left: calc(var(--edge) + 209.5 * var(--uw)); }
+.footer__col--studio { left: calc(var(--edge) + 419 * var(--uw)); }
+.footer__label {
+  margin: 0;
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-flabel);
+  line-height: 2.0833;
+  color: #7D7E78;
+}
+.footer__links {
+  margin: calc(17 * var(--uw)) 0 0; padding: 0; list-style: none;
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-flink);
+  line-height: 2;
+  white-space: nowrap;
+}
+.footer__links a { color: inherit; text-decoration: none; transition: opacity .2s ease; }
+.footer__links a:hover { opacity: .5; }
+.footer__links a:focus-visible, .footer__logo:focus-visible { outline: 1px solid #0A0A0F; outline-offset: 3px; }
+.footer__logo {
+  left: var(--edge);
+  top: calc(296 * var(--uw));
+  display: flex; align-items: center; gap: calc(13 * var(--uw));
+  color: inherit; text-decoration: none;
+}
+.footer__mark { width: calc(53.5 * var(--uw)); height: auto; }
+.footer__word {
+  font-family: "HeadingNow", sans-serif;
+  font-size: var(--fs-flogo);
+  line-height: 1;
+  font-variation-settings: "wght" 800, "wdth" 924;
+}
+.footer__copy {
+  left: var(--edge);
+  top: calc(355.84 * var(--uw));
+  font-family: "Pixel", monospace;
+  font-size: var(--fs-flabel);
+  line-height: 2.0833;
+  color: #7D7E78;
+  white-space: nowrap;
+}
+
+/* ======================================================================
+   ПОЯВЛЕНИЕ: фото — шторкой снизу вверх, как в «Brand philosophy»
+   ====================================================================== */
+.reveals .honors__photo.reveal { transform: none; opacity: 1; clip-path: inset(0 0 0 0 round calc(4 * var(--uw))); }
+.reveals .honors__photo.reveal:not(.is-in) { clip-path: inset(100% 0 0 0 round calc(4 * var(--uw))); }
+.reveals .honors__photo img { transition: transform 1.4s cubic-bezier(.2, .7, .2, 1); }
+.reveals .honors__photo:not(.is-in) img { transform: scale(1.12); }
+/* параллакс боковых фото — свойство translate (его ставит js/blocks.js), не мешает transform появления */
+.honors__photo--left, .honors__photo--right { will-change: translate; }
+
+/* ======================================================================
+   ДО 1200 px — телефон и планшет: всё друг под другом
+   ====================================================================== */
+@media (max-width: 1199.98px) {
+  .honors > *, .signup > *, .footer > * {
+    --gap: var(--m-gap);
+    --fs-award: var(--m-text);
+    --fs-note: var(--m-text);
+    --fs-hlogo: clamp(3rem, calc(2rem + 6vw), 5.5rem);
+    --fs-stitle: var(--m-h);
+    --fs-slead: var(--m-text);
+    --fs-sfield: 0.75rem;
+    --fs-snote: 0.75rem;
+    --fs-flabel: var(--m-text);
+    --fs-flink: var(--m-nav);
+    --fs-flogo: 2rem;
+  }
+  .honors__frame { width: auto; height: auto; padding: 56px var(--gap); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .honors__frame > * { position: relative; left: auto; right: auto; top: auto; }
+  .honors__award { grid-column: 1 / -1; order: 1; text-align: left; line-height: var(--m-tlh); white-space: normal; }
+  .honors__award br, .honors__note br { display: none; }
+  .honors__logo { grid-column: 1 / -1; order: 0; height: auto; display: flex; align-items: center; justify-content: center; gap: 0.3em; font-size: var(--fs-hlogo); }
+  .honors__mark, .honors__word { position: static; }
+  .honors__mark { width: 1.38em; }
+  .honors__word { line-height: 1; }
+  .honors__photo { width: auto; height: auto; border-radius: 4px; }
+  .honors__photo--main { grid-column: 1 / -1; order: 2; aspect-ratio: 896 / 1120.5; }
+  .honors__photo--left { order: 3; aspect-ratio: 224 / 240; }
+  .honors__photo--right { order: 4; aspect-ratio: 224 / 240; }
+  .honors__note { grid-column: 1 / -1; order: 5; line-height: var(--m-tlh); white-space: normal; }
+  .reveals .honors__photo.reveal { clip-path: inset(0 0 0 0 round 4px); }
+  .reveals .honors__photo.reveal:not(.is-in) { clip-path: inset(100% 0 0 0 round 4px); }
+
+  .signup { height: auto; }
+  .signup__photo { height: auto; aspect-ratio: 4 / 3; }
+  .signup__photo img { position: static; width: 100%; height: 100%; object-fit: cover; object-position: 48% 20%; }
+  .signup__card { position: relative; left: auto; right: auto; top: auto; width: auto; height: auto; margin: -48px var(--gap) 0; padding: 40px 20px 28px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .signup__card > * { position: relative; left: auto; top: auto; }
+  .signup__title { line-height: var(--m-lh); font-variation-settings: "wght" 550, "wdth" 830; }
+  .signup__lead { line-height: var(--m-tlh); white-space: normal; max-width: 34ch; }
+  .signup__lead br, .signup__note br { display: none; }
+  .signup__field { width: 100%; }
+  .signup__input { height: 44px; padding: 0 14px; border-radius: 4px; }
+  .signup__send { width: 56px; height: 56px; }
+  .signup__send svg { width: 14px; height: 14px; }
+  .signup__status:empty { display: none; }
+  .signup__card::after { position: relative; left: auto; right: auto; top: auto; order: 9; width: 100%; }
+  .signup__note { order: 10; white-space: normal; max-width: 34ch; line-height: var(--m-tlh); }
+
+  .footer__frame { width: auto; height: auto; padding: 48px var(--gap) 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 32px 24px; }
+  .footer__frame > * { position: relative; left: auto; top: auto; }
+  .footer__links { margin-top: 12px; white-space: normal; }
+  .footer__logo { grid-column: 1 / -1; margin-top: 24px; gap: 10px; }
+  .footer__mark { width: 40px; }
+  .footer__copy { grid-column: 1 / -1; margin-top: -20px; }
+}
+
+/* ======================================================================
+   ПЛАНШЕТ (700–1199 px): наборные тексты — с переносами строк, как на десктопе,
+   а не узкой колонкой (на планшете хватает ширины для строк макета). Тексты карточек Two sides —
+   в две колонки, строки макета туда не входят, поэтому переносятся как обычно
+   ====================================================================== */
+@media (min-width: 700px) and (max-width: 1199.98px) {
+  .tagline br, .sides__lead br, .models__lead br, .lot__desc br, .philosophy__text br,
+  .honors__award br, .honors__note br, .signup__lead br, .signup__note br { display: inline; }
+  .tagline, .sides__lead, .models__lead, .lot__desc, .philosophy__text,
+  .honors__award, .honors__note, .signup__lead, .signup__note { white-space: nowrap; max-width: none; }
+}
+

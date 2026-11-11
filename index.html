@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="img/favicon.svg?v=82916df9" type="image/svg+xml">
+  <title>YORU — Reversible sukajan from Yokosuka</title>
+  <meta name="description" content="Reversible sukajan from Yokosuka. 200 per model only, no reprints, ever.">
+  <!-- прелоудер: только при первом заходе за сеанс (и не при «уменьшить движение») — класс ставится до отрисовки -->
+  <script>try { if (!sessionStorage.getItem("yoru-intro") && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("intro"); } catch (e) {}</script>
+  <link rel="preload" href="fonts/digital-upscaled-pixel.woff2?v=ca795961" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/heading-now-var.woff2?v=464df585" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="img/bg-calligraphy.webp?v=f59d5cfa" as="image">
+  <link rel="stylesheet" href="css/styles.css?v=6269e6fb">
+  <link rel="stylesheet" href="css/journey.css?v=a6fc6f59">
+  <link rel="stylesheet" href="css/blocks.css?v=0cc8fe9a">
+  <link rel="stylesheet" href="css/final.css?v=63a93421">
+  <!-- на десктопе с мышью библиотеки анимации начинают грузиться сразу, на телефоне — нет -->
+  <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" media="(min-width: 1200px) and (hover: hover) and (pointer: fine)">
+  <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" media="(min-width: 1200px) and (hover: hover) and (pointer: fine)">
+</head>
+<body>
+  <!-- Прелоудер (js/preloader.js): красные пиксели заливают экран, счётчик загрузки, набирается логотип, пиксели уходят -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <canvas class="preloader__canvas"></canvas>
+    <div class="preloader__center">
+      <div class="preloader__logo"><img class="preloader__mark" src="img/logo-mark.svg?v=7d82ea4d" alt=""><span class="preloader__word">YORU</span></div>
+      <div class="preloader__bar"><i></i></div>
+    </div>
+    <p class="preloader__count">0%</p>
+  </div>
+
+  <!-- Закреплённая шапка: скрыта при прокрутке вниз, появляется при прокрутке вверх (js/shop.js) -->
+  <header class="topbar topbar--float" aria-label="Site">
+    <a class="topbar__logo" href="#hero" data-nav="top" aria-label="YORU — back to top"><img src="img/logo-mark.svg?v=7d82ea4d" alt=""><span>YORU</span></a>
+    <nav class="topbar__nav" aria-label="Main">
+      <button class="topbar__menu" type="button" aria-expanded="false" aria-controls="float-menu">MENU</button>
+      <div class="topbar__links" id="float-menu">
+        <a href="#two-sides" data-nav="sides">ABOUT</a>
+        <a href="#models" data-nav="models">MODELS</a>
+        <a href="#contacts" data-nav="contacts">CONTACTS</a>
+      </div>
+      <a class="topbar__cart" href="cart.html" data-cart-link>CART</a>
+    </nav>
+  </header>
+
+  <div class="page" id="page">
+
+    <!-- 1. HERO — не меньше высоты экрана (100svh).
+         Элементы лежат в рамках 1440×720u, привязанных к углам экрана: при любой высоте
+         верхние остаются сверху, нижние — снизу, куртка — по центру. -->
+    <header class="hero" id="hero">
+
+      <!-- Красные пиксельные блоки: верхняя часть у верха, нижняя у низа, между ними тянется левая колонка -->
+      <div class="blocks" aria-hidden="true">
+        <svg class="blocks__top" viewBox="0 0 1232 825" preserveAspectRatio="xMinYMin meet" shape-rendering="crispEdges">
+          <path d="M0 0h1231v136H0zM0 136h526v162H0zM863 149h184v83H863zM526 215h521v17H526zM526 232h446v66H526zM0 298h526v38H0zM0 336h711v19H0zM0 355h100v50H0zM527 355h184v50H527zM0 405h711v15H0zM0 420h627v69H0zM0 489h100v117H0zM246 489h184v117H246zM0 606h270v84H0zM0 690h100v150H0zM300 693h261v117H300z"/>
+        </svg>
+        <div class="blocks__stretch"></div>
+        <svg class="blocks__bottom" viewBox="0 825 1232 615" preserveAspectRatio="xMinYMax meet" shape-rendering="crispEdges">
+          <path d="M0 690h100v150H0zM0 840h361v95H0zM443 852h184v83H443zM0 935h627v22H0zM0 957h100v95H0zM326 957h301v12H326zM326 969h184v83H326zM0 1052h793v151H0zM0 1203h594v68H0zM0 1271h697v169H0z"/>
+        </svg>
+      </div>
+
+      <!-- верх слева -->
+      <div class="frame frame--tl">
+        <a class="logo" href="#hero" aria-label="YORU — home">
+          <img class="logo__mark" src="img/logo-mark.svg?v=7d82ea4d" alt="">
+          <span class="logo__word">YORU</span>
+        </a>
+        <p class="tagline">Yokosuka satin, stitched both ways. <br>Pick a&nbsp;side at the&nbsp;door.</p>
+        <p class="badge badge--limit">
+          <span>200 PER MODEL ONLY<br>NO REPRINTS, EVER</span>
+          <img class="badge__icon" src="img/icon-layers.svg?v=b8fabcbd" alt="">
+        </p>
+      </div>
+
+      <!-- верх справа -->
+      <div class="frame frame--tr">
+        <nav class="nav" aria-label="Main">
+          <!-- на телефоне и планшете пункты прячутся под бургер -->
+          <button class="nav__burger" type="button" aria-expanded="false" aria-controls="nav-menu">MENU</button>
+          <div class="nav__menu" id="nav-menu">
+            <a class="nav__link nav__link--about" href="#two-sides" data-nav="sides">ABOUT</a>
+            <a class="nav__link nav__link--models" href="#models" data-nav="models">MODELS</a>
+            <a class="nav__link nav__link--contacts" href="#contacts" data-nav="contacts">CONTACTS</a>
+          </div>
+          <a class="nav__link nav__link--cart" href="cart.html" data-cart-link>CART</a>
+        </nav>
+        <p class="badge badge--ships">
+          <img class="badge__icon" src="img/icon-cube.svg?v=7299a1f9" alt="">
+          <span>SHIPS FROM TOKYO<br>2–3&nbsp;DAYS, WORLDWIDE</span>
+        </p>
+      </div>
+
+      <!-- центр: якорь куртки -->
+      <div class="frame frame--c">
+        <div class="jacket-anchor jacket-anchor--hero" data-anchor="hero" aria-hidden="true">
+          <img class="jacket-static" src="img/jacket-red.webp?v=23708eb7" srcset="img/jacket-red-sm.webp?v=0ccdb69b 540w, img/jacket-red.webp?v=23708eb7 1044w, img/jacket-red-2x.webp?v=5bbf31f0 1566w" sizes="(max-width: 1199.98px) calc(100vw - 32px), 45vw" alt="" loading="lazy" decoding="async">
+        </div>
+      </div>
+
+      <!-- низ слева -->
+      <div class="frame frame--bl">
+        <h1 class="hero__title">REVERSIBLE SUKAJAN <br>FROM YOKOSUKA</h1>
+        <div class="hero__actions">
+          <a class="btn btn--light" href="#collections" data-nav="collections">PICK YOUR SIDE</a>
+          <a class="btn btn--dark" href="#models" data-nav="models">NEW COLLECTION</a>
+        </div>
+      </div>
+
+      <!-- низ справа -->
+      <div class="frame frame--br">
+        <ul class="hero__facts">
+          <li>TWO SHELLS</li>
+          <li>TURN IT INSIDE OUT</li>
+          <li>ZERO PRINT</li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- 2. TWO SIDES MATTER -->
+    <div class="sides-screen">   <!-- второй экран: во всю высоту окна (100vh), композиция из макета — по центру -->
+      <section class="sides" id="two-sides" aria-labelledby="sides-title">
+        <h2 class="sides__title" id="sides-title">TWO SIDES <br>MATTER</h2>
+        <p class="sides__lead">Born in Yokosuka, late 1940s. <br>Sailors, tailors, and a&nbsp;jacket <br>meant to be turned inside out.</p>
+  
+        <!-- Якорь: положение и размер куртки во втором блоке -->
+        <div class="jacket-anchor jacket-anchor--sides" data-anchor="sides" aria-hidden="true">
+          <img class="jacket-static" src="img/jacket-pink.webp?v=b77ce315" srcset="img/jacket-pink-sm.webp?v=2a9a3f69 540w, img/jacket-pink.webp?v=b77ce315 1618w, img/jacket-pink-2x.webp?v=343584f8 2427w" sizes="(max-width: 1199.98px) calc(100vw - 32px), 63vw" alt="" loading="lazy" decoding="async">
+        </div>
+  
+        <ul class="cards">
+          <li class="card card--1">
+            <h3 class="card__title">SATIN SHELL</h3>
+            <p class="card__text">Acetate satin, 180 gsm. Holds the sheen, not <br>the creases – pressed once, worn for years.</p>
+          </li>
+          <li class="card card--2">
+            <h3 class="card__title">YOKOSUKA STITCH</h3>
+            <p class="card__text">Machine-guided by hand, the way Kiryu <br>embroiderers did it in 1949. Thread, not print. <br>Feel the relief.</p>
+          </li>
+          <li class="card card--3">
+            <h3 class="card__title">FULLY REVERSIBLE</h3>
+            <p class="card__text">Two shells, two motifs, one seam between <br>them. Flip it in a doorway. Nobody sees the <br>same jacket twice.</p>
+          </li>
+          <li class="card card--4">
+            <h3 class="card__title">QUILTED BODY</h3>
+            <p class="card__text">Diamond quilting through both layers keeps the <br>satin flat and the shape sharp. No sag at the <br>hem.</p>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Куртка: один слой, переезжает с первого экрана во второй блок -->
+    <div class="jacket" id="jacket" aria-hidden="true">
+      <canvas class="jacket__canvas"></canvas>
+    </div>
+
+  </div>
+
+  <!-- 3–5. СЛАЙДЕР → ПОЛЕ С КУРТКАМИ → MODELS FROM THE NEW COLLECTION -->
+  <section class="journey" id="journey" aria-label="Lookbook and new collection">
+    <div class="journey__track">
+
+      <!-- на телефоне фото ложатся стопкой: каждое встаёт у верха экрана, следующее наезжает сверху -->
+      <div class="journey__slides">
+      <article class="slide">
+        <img class="slide__img" src="img/slider/1.webp?v=e7fa226e" srcset="img/slider/1.webp?v=e7fa226e 1920w, img/slider/1-2x.webp?v=b9898a42 2752w" sizes="100vw" alt="A man in a black sukajan with a white dragon on a wet night street in Tokyo" loading="lazy" decoding="async">
+        <ul class="slide__meta"><li>Reversible souvenir jackets</li><li>One seam</li><li>Est. Yokosuka</li></ul>
+        <h2 class="slide__title">Two sides. <br>One night</h2>
+      </article>
+
+      <article class="slide">
+        <img class="slide__img" src="img/slider/2.webp?v=e62782db" srcset="img/slider/2.webp?v=e62782db 1920w, img/slider/2-2x.webp?v=30e48602 2752w" sizes="100vw" alt="A woman in a cream-sleeved sukajan with a crescent moon at a ramen bar" loading="lazy" decoding="async">
+        <ul class="slide__meta"><li>Embroidered both ways</li><li>40,000 stitches</li><li>Kiryu, Japan</li></ul>
+        <h2 class="slide__title">Wear it <br>inside out</h2>
+      </article>
+
+      <article class="slide">
+        <img class="slide__img" src="img/slider/3.webp?v=3d2233b0" srcset="img/slider/3.webp?v=3d2233b0 1920w, img/slider/3-2x.webp?v=0dc4450c 2752w" sizes="100vw" alt="Two people in sukajans by a red sports car in a night parking lot" loading="lazy" decoding="async">
+        <ul class="slide__meta"><li>No print, only thread</li><li>Flip at the door</li><li>Dragon to tiger</li></ul>
+        <h2 class="slide__title">One jacket. <br>Two stories</h2>
+      </article>
+      </div>
+
+      <div class="field">
+        <div class="field__stage">
+          <!-- текст — только на телефоне, в сцене Depth Zoom -->
+          <p class="field__text">The night has two sides</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="models" id="models">
+      <div class="models__frame">
+        <h2 class="models__title">MODELS FROM <br>THE NEW COLLECTION</h2>
+        <p class="models__lead">Two motifs, eight faces. Each one embroidered <br>in thread, finished on both sides, and made in <br>batches small enough to run out.</p>
+
+        <!-- левая карточка — 2-й лот -->
+        <article class="lot lot--left" data-lot>
+          <span class="lot__num">01</span>
+          <span class="lot__badge">limited edition</span>
+          <span class="lot__price">$890</span>
+          <div class="lot__view">
+            <div class="lot__strip">
+              <img src="img/lots/hanazaru-1.webp?v=ee8dda03" srcset="img/lots/hanazaru-1-m.webp?v=5207b0b5 800w, img/lots/hanazaru-1.webp?v=ee8dda03 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Hanazaru sukajan, open — both sides visible" loading="lazy">
+              <img src="img/lots/hanazaru-2.webp?v=220ad369" srcset="img/lots/hanazaru-2-m.webp?v=8cf91a38 800w, img/lots/hanazaru-2.webp?v=220ad369 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Hanazaru, cream side, front" loading="lazy">
+              <img src="img/lots/hanazaru-3.webp?v=6fa12729" srcset="img/lots/hanazaru-3-m.webp?v=8274269b 800w, img/lots/hanazaru-3.webp?v=6fa12729 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Hanazaru, cream side, back" loading="lazy">
+              <img src="img/lots/hanazaru-4.webp?v=cd13f46e" srcset="img/lots/hanazaru-4-m.webp?v=1d339287 800w, img/lots/hanazaru-4.webp?v=cd13f46e 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Hanazaru, pink side, front" loading="lazy">
+              <img src="img/lots/hanazaru-5.webp?v=b37872ff" srcset="img/lots/hanazaru-5-m.webp?v=bbc8b8b1 800w, img/lots/hanazaru-5.webp?v=b37872ff 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Hanazaru, pink side, back" loading="lazy">
+            </div>
+          </div>
+          <ul class="lot__dots" aria-label="Hanazaru photos">
+            <li><button class="lot__dot" type="button" aria-current="true" aria-label="Photo 1"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 2"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 3"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 4"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 5"></button></li>
+          </ul>
+          <h3 class="lot__name">HANAZARU</h3>
+          <p class="lot__desc">Two macaques, one branch. Stitched by direction, <br>not color – fur catches light, petals never land.</p>
+          <a class="lot__btn" href="product.html?id=hanazaru">SHOP NOW</a>
+        </article>
+
+        <!-- правая карточка — 1-й лот -->
+        <article class="lot lot--right" data-lot>
+          <span class="lot__num">02</span>
+          <span class="lot__badge">limited edition</span>
+          <span class="lot__price">$690</span>
+          <div class="lot__view">
+            <div class="lot__strip">
+              <img src="img/lots/sumiryu-1.webp?v=bfc699a9" srcset="img/lots/sumiryu-1-m.webp?v=07fbee9e 800w, img/lots/sumiryu-1.webp?v=bfc699a9 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Sumiryu sukajan, open — both sides visible" loading="lazy">
+              <img src="img/lots/sumiryu-2.webp?v=e0e8b998" srcset="img/lots/sumiryu-2-m.webp?v=948ca9d3 800w, img/lots/sumiryu-2.webp?v=e0e8b998 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Sumiryu, black side, front" loading="lazy">
+              <img src="img/lots/sumiryu-3.webp?v=d3a42809" srcset="img/lots/sumiryu-3-m.webp?v=ce317f2b 800w, img/lots/sumiryu-3.webp?v=d3a42809 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Sumiryu, black side, back" loading="lazy">
+              <img src="img/lots/sumiryu-4.webp?v=8acbe1d3" srcset="img/lots/sumiryu-4-m.webp?v=011fdd0c 800w, img/lots/sumiryu-4.webp?v=8acbe1d3 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Sumiryu, green side, front" loading="lazy">
+              <img src="img/lots/sumiryu-5.webp?v=8d12deb6" srcset="img/lots/sumiryu-5-m.webp?v=b0a22313 800w, img/lots/sumiryu-5.webp?v=8d12deb6 1600w" sizes="(min-width: 1200px) 1600px, calc(65vw - 40px)" decoding="async" alt="Sumiryu, green side, back" loading="lazy">
+            </div>
+          </div>
+          <ul class="lot__dots" aria-label="Sumiryu photos">
+            <li><button class="lot__dot" type="button" aria-current="true" aria-label="Photo 1"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 2"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 3"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 4"></button></li>
+            <li><button class="lot__dot" type="button" aria-current="false" aria-label="Photo 5"></button></li>
+          </ul>
+          <h3 class="lot__name">SUMIRYU</h3>
+          <p class="lot__desc">Ink dragon, red moon. Drawn in thread, not paint <br>– one brush stroke, ten thousand stitches.</p>
+          <a class="lot__btn" href="product.html?id=sumiryu">SHOP NOW</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. BRAND PHILOSOPHY -->
+  <section class="philosophy" id="philosophy" aria-labelledby="philosophy-title">
+    <div class="philosophy__frame">
+      <h2 class="philosophy__title reveal" id="philosophy-title">BRAND <br>PHILOSOPHY</h2>
+      <p class="philosophy__text">YORU means night – when a city changes sides. We make one <br>jacket that is two: a side you show, a side you keep, joined <br>by one seam. Neither is a lining. Both are stitched to be worn. <br>You choose which one shows.</p>
+      <figure class="philosophy__photo philosophy__photo--big"><img src="img/philosophy/1.webp?v=79d5a192" width="930" height="1003" alt="A young man in a black and silver sukajan with a red moon under a railway bridge at night" loading="lazy" decoding="async"></figure>
+      <figure class="philosophy__photo philosophy__photo--small"><img src="img/philosophy/2.webp?v=65a09d87" width="604" height="775" alt="A young woman in a black sukajan with pink sleeves and cherry blossoms sitting on a red car" loading="lazy" decoding="async"></figure>
+      <div class="philosophy__logo reveal" aria-hidden="true">
+        <img class="philosophy__mark" src="img/logo-mark.svg?v=7d82ea4d" alt="">
+        <span class="philosophy__word">YORU</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. COLLECTIONS -->
+  <section class="collections" id="collections" aria-labelledby="collections-title">
+    <div class="collections__frame">
+      <h2 class="collections__title reveal" id="collections-title">COLLECTIONS</h2>
+      <ul class="collections__meta"><li>Embroidered both ways</li><li>No print, only thread</li><li>Reversible jackets</li></ul>
+      <div class="collections__cards">
+        <article class="collection-card reveal" data-lot>
+          <span class="collection-card__num">01</span>
+          <span class="collection-card__badge">limited edition</span>
+          <h3 class="collection-card__name">DRAGON CARP</h3>
+          <span class="collection-card__price">$890</span>
+          <div class="collection-card__view">
+            <div class="collection-card__strip">
+              <img src="img/cards/dragon-carp-1.webp?v=43a2d076" alt="Dragon Carp, red side, front" loading="lazy" decoding="async">
+              <img src="img/cards/dragon-carp-2.webp?v=7636245a" alt="Dragon Carp, red side, back" loading="lazy" decoding="async">
+              <img src="img/cards/dragon-carp-3.webp?v=da2d3369" alt="Dragon Carp, pink side, front" loading="lazy" decoding="async">
+              <img src="img/cards/dragon-carp-4.webp?v=e35e62a2" alt="Dragon Carp, pink side, back" loading="lazy" decoding="async">
+            </div>
+          </div>
+          <ul class="collection-card__dots" aria-label="Dragon Carp photos">
+            <li><button class="collection-card__dot" type="button" aria-current="true" aria-label="Photo 1"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 2"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 3"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 4"></button></li>
+          </ul>
+          <a class="collection-card__btn" href="product.html?id=dragon-carp">SHOP NOW</a>
+        </article>
+        <article class="collection-card reveal" data-lot>
+          <span class="collection-card__num">02</span>
+          <span class="collection-card__badge">limited edition</span>
+          <h3 class="collection-card__name">KARIGANE</h3>
+          <span class="collection-card__price">$780</span>
+          <div class="collection-card__view">
+            <div class="collection-card__strip">
+              <img src="img/cards/karigane-1.webp?v=eca23211" alt="Karigane, cream side, front" loading="lazy" decoding="async">
+              <img src="img/cards/karigane-2.webp?v=40f4c034" alt="Karigane, cream side, back" loading="lazy" decoding="async">
+              <img src="img/cards/karigane-3.webp?v=3e4203e4" alt="Karigane, black side, front" loading="lazy" decoding="async">
+              <img src="img/cards/karigane-4.webp?v=d53a112d" alt="Karigane, black side, back" loading="lazy" decoding="async">
+            </div>
+          </div>
+          <ul class="collection-card__dots" aria-label="Karigane photos">
+            <li><button class="collection-card__dot" type="button" aria-current="true" aria-label="Photo 1"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 2"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 3"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 4"></button></li>
+          </ul>
+          <a class="collection-card__btn" href="product.html?id=karigane">SHOP NOW</a>
+        </article>
+        <article class="collection-card reveal" data-lot>
+          <span class="collection-card__num">03</span>
+          <span class="collection-card__badge">limited edition</span>
+          <h3 class="collection-card__name">ONAMI</h3>
+          <span class="collection-card__price">$790</span>
+          <div class="collection-card__view">
+            <div class="collection-card__strip">
+              <img src="img/cards/onami-1.webp?v=6a2c63a7" alt="Onami, wave side, front" loading="lazy" decoding="async">
+              <img src="img/cards/onami-2.webp?v=284f0922" alt="Onami, wave side, back" loading="lazy" decoding="async">
+              <img src="img/cards/onami-3.webp?v=9eba133c" alt="Onami, blossom side, front" loading="lazy" decoding="async">
+              <img src="img/cards/onami-4.webp?v=d970d477" alt="Onami, blossom side, back" loading="lazy" decoding="async">
+            </div>
+          </div>
+          <ul class="collection-card__dots" aria-label="Onami photos">
+            <li><button class="collection-card__dot" type="button" aria-current="true" aria-label="Photo 1"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 2"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 3"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 4"></button></li>
+          </ul>
+          <a class="collection-card__btn" href="product.html?id=onami">SHOP NOW</a>
+        </article>
+        <article class="collection-card reveal" data-lot>
+          <span class="collection-card__num">04</span>
+          <span class="collection-card__badge">limited edition</span>
+          <h3 class="collection-card__name">BYAKKO</h3>
+          <span class="collection-card__price">$590</span>
+          <div class="collection-card__view">
+            <div class="collection-card__strip">
+              <img src="img/cards/byakko-1.webp?v=222c6e53" alt="Byakko, wolf side, front" loading="lazy" decoding="async">
+              <img src="img/cards/byakko-2.webp?v=271e62ad" alt="Byakko, wolf side, back" loading="lazy" decoding="async">
+              <img src="img/cards/byakko-3.webp?v=147fd2a8" alt="Byakko, tiger side, front" loading="lazy" decoding="async">
+              <img src="img/cards/byakko-4.webp?v=997699ac" alt="Byakko, tiger side, back" loading="lazy" decoding="async">
+            </div>
+          </div>
+          <ul class="collection-card__dots" aria-label="Byakko photos">
+            <li><button class="collection-card__dot" type="button" aria-current="true" aria-label="Photo 1"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 2"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 3"></button></li>
+            <li><button class="collection-card__dot" type="button" aria-current="false" aria-label="Photo 4"></button></li>
+          </ul>
+          <a class="collection-card__btn" href="product.html?id=byakko">SHOP NOW</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. ДОСТИЖЕНИЯ -->
+  <section class="honors" id="honors" aria-label="YORU awards and story">
+    <div class="honors__frame">
+      <p class="honors__award">Named Best Souvenir Jacket Label <br>2026 by Night Market Selection.</p>
+      <div class="honors__logo reveal" role="img" aria-label="YORU">
+        <img class="honors__mark" src="img/logo-mark.svg?v=7d82ea4d" alt="">
+        <span class="honors__word" aria-hidden="true">YORU</span>
+      </div>
+      <figure class="honors__photo honors__photo--main"><img src="img/honors/main.webp?v=dd4c6e00" srcset="img/honors/main-m.webp?v=d2a8aa0d 1400w, img/honors/main.webp?v=dd4c6e00 1792w" sizes="(min-width: 1200px) 1792px, 109vw" decoding="async" width="1792" height="2400" alt="A young man in a green and black dragon sukajan sitting on the floor of a red elevator" loading="lazy"></figure>
+      <figure class="honors__photo honors__photo--left" data-drift="1"><img src="img/honors/left.webp?v=ea6912f9" width="960" height="960" alt="A young man in a wave sukajan eating with chopsticks at a street food stall" loading="lazy" decoding="async"></figure>
+      <figure class="honors__photo honors__photo--right" data-drift="-1"><img src="img/honors/right.webp?v=bd7e9af7" width="960" height="960" alt="A young man in a black dragon sukajan standing by a white car in a graffiti alley" loading="lazy" decoding="async"></figure>
+      <p class="honors__note">Seven years in. Still one <br>seam, still two sides.</p>
+    </div>
+  </section>
+
+  <!-- 9. ПЕРЕБИВКА С ФОРМОЙ ПОДПИСКИ -->
+  <section class="signup" id="drops" aria-labelledby="signup-title">
+    <div class="signup__photo"><img src="img/honors/signup.webp?v=c02aebf5" srcset="img/honors/signup-m.webp?v=29d2c971 1800w, img/honors/signup.webp?v=c02aebf5 2752w" sizes="(min-width: 1200px) 2752px, 135vw" decoding="async" width="2752" height="1536" alt="A young man in a red and black dragon sukajan under a steel railway bridge at night" loading="lazy"></div>
+    <form class="signup__card" action="#" novalidate>
+      <h2 class="signup__title" id="signup-title">DROPS AT <br>NIGHT, NOT <br>NOISE</h2>
+      <p class="signup__lead">You'll only hear from us when <br>a new jacket is ready to turn.</p>
+      <label class="signup__field">
+        <span class="visually-hidden">Email address</span>
+        <input class="signup__input" type="email" name="email" placeholder="ENTER SIGNAL ADDRESS" autocomplete="email" required>
+      </label>
+      <button class="signup__send" type="submit" aria-label="Subscribe"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.2 10.8 10.4 1.6M2.6 1.2h8.2v8.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      <p class="signup__status" role="status" aria-live="polite"></p>
+      <p class="signup__note">No weekly letters. Just rare drops, <br>numbered and gone.</p>
+    </form>
+  </section>
+
+  <!-- 10. ФУТЕР -->
+  <footer class="footer" id="contacts">
+    <div class="footer__frame">
+      <nav class="footer__col footer__col--menu" aria-label="Footer">
+        <p class="footer__label">Menu</p>
+        <ul class="footer__links">
+          <li><a href="#two-sides" data-nav="sides">ABOUT</a></li>
+          <li><a href="#models" data-nav="models">MODELS</a></li>
+          <li><a href="#collections" data-nav="collections">COLLECTIONS</a></li>
+          <li><a href="#drops">DROPS</a></li>
+        </ul>
+      </nav>
+      <div class="footer__col footer__col--social">
+        <p class="footer__label">Follow</p>
+        <ul class="footer__links">
+          <li><a href="#instagram">INSTAGRAM</a></li>
+          <li><a href="#telegram">TELEGRAM</a></li>
+        </ul>
+      </div>
+      <div class="footer__col footer__col--studio">
+        <p class="footer__label">Studio</p>
+        <ul class="footer__links footer__links--plain">
+          <li>YOKOSUKA, JAPAN</li>
+          <li>SHIPS FROM TOKYO</li>
+          <li>2–3 DAYS, WORLDWIDE</li>
+        </ul>
+      </div>
+      <a class="footer__logo" href="#hero" data-nav="top" aria-label="YORU — back to top">
+        <img class="footer__mark" src="img/logo-mark-dark.svg?v=771e92f7" alt="">
+        <span class="footer__word">YORU</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- GSAP и плавная прокрутка нужны только на десктопе: js/main.js подгружает их сам -->
+  <script type="module" src="js/main.js?v=3a08b7b5"></script>
+</body>
+</html>

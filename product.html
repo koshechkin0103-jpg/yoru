@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="img/favicon.svg?v=82916df9" type="image/svg+xml">
+  <title>YORU — Reversible sukajan</title>
+  <meta name="description" content="Reversible sukajan from Yokosuka. 200 per model only, no reprints, ever.">
+  <link rel="preload" href="fonts/digital-upscaled-pixel.woff2?v=ca795961" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/heading-now-var.woff2?v=464df585" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css?v=6269e6fb">
+  <link rel="stylesheet" href="css/final.css?v=63a93421">
+  <link rel="stylesheet" href="css/shop.css?v=14c16d35">
+</head>
+<body>
+  <!-- ШАПКА: как на главной — логотип, меню, CART -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="YORU — home"><img src="img/logo-mark.svg?v=7d82ea4d" alt=""><span>YORU</span></a>
+    <nav class="topbar__nav" aria-label="Main">
+      <button class="topbar__menu" type="button" aria-expanded="false" aria-controls="shop-menu">MENU</button>
+      <div class="topbar__links" id="shop-menu">
+        <a href="index.html#two-sides">ABOUT</a>
+        <a href="index.html#models">MODELS</a>
+        <a href="index.html#contacts">CONTACTS</a>
+      </div>
+      <a class="topbar__cart" href="cart.html" data-cart-link>CART</a>
+    </nav>
+  </header>
+
+  <!-- ТОВАР: заполняется из js/products.js по ?id=… -->
+  <main class="product shop-anim" id="product">
+    <ul class="product__gallery" aria-label="Photos"></ul>
+    <div class="product__info">
+      <a class="shop-back product__back fade" href="index.html#collections" style="--d:0"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M15 8H2M7 3 2 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>BACK</a>
+      <p class="product__meta fade" style="--d:1"><span class="product__num"></span><span>limited edition</span></p>
+      <h1 class="shop-head product__title"></h1>
+      <p class="product__price fade" style="--d:2"></p>
+      <p class="shop-text product__desc"></p>
+      <div class="product__sizehead fade" style="--d:3">
+        <span>SELECT YOUR SIZE</span>
+        <button class="product__guide-open" type="button" aria-haspopup="dialog" aria-controls="size-guide" data-guide>SIZE GUIDE</button>
+      </div>
+      <div class="size product__size fade" style="--d:4">
+        <button class="size__button" type="button" aria-haspopup="listbox" aria-expanded="false" data-empty>
+          <span class="size__value">SELECT SIZE</span>
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 4 6 8.5 10.5 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+        <ul class="size__list" role="listbox" aria-label="Size" tabindex="-1"></ul>
+      </div>
+      <div class="qty product__qty fade" style="--d:5" aria-label="Quantity">
+        <button type="button" data-step="-1" aria-label="Less"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6h10" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <output aria-live="polite">1</output>
+        <button type="button" data-step="1" aria-label="More"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 6h10M6 1v10" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      </div>
+      <button class="shop-btn product__add fade" type="button" style="--d:6">ADD TO CART <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.2 10.8 10.4 1.6M2.6 1.2h8.2v8.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      <p class="shop-status product__status" role="status" aria-live="polite"></p>
+      <ul class="shop-text product__facts fade" style="--d:7">
+        <li>200 per model only, no reprints, ever</li>
+        <li>Ships from Tokyo, 2–3 days, worldwide</li>
+      </ul>
+      <!-- подробности о куртке: раскрываются по нажатию (как в магазинах одежды) -->
+      <div class="product__more fade" style="--d:8">
+        <details class="acc">
+          <summary>DETAILS</summary>
+          <ul class="acc__body shop-text" data-details></ul>
+        </details>
+        <details class="acc">
+          <summary>COMPOSITION &amp; CARE</summary>
+          <div class="acc__body shop-text">
+            <dl class="acc__spec">
+              <dt>Shell, both sides</dt><dd>100% acetate satin, 180 gsm</dd>
+              <dt>Embroidery</dt><dd>Rayon thread</dd>
+              <dt>Padding</dt><dd>100% polyester, diamond-quilted</dd>
+              <dt>Collar, cuffs, hem</dt><dd>80% acrylic, 20% wool rib</dd>
+            </dl>
+            <ul>
+              <li>Dry clean only</li>
+              <li>Do not tumble dry</li>
+              <li>Iron low, inside out, never over the embroidery</li>
+              <li>Hang on a wide hanger</li>
+            </ul>
+          </div>
+        </details>
+        <details class="acc">
+          <summary>SIZE &amp; FIT</summary>
+          <div class="acc__body shop-text">
+            <ul>
+              <li>Boxy, cropped at the hip — the 1950s Yokosuka cut</li>
+              <li>Model is 183 cm, wears L</li>
+              <li>Between sizes or layering a hoodie — go one size up</li>
+            </ul>
+            <button class="acc__link" type="button" aria-haspopup="dialog" aria-controls="size-guide" data-guide>OPEN SIZE GUIDE <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.2 10.8 10.4 1.6M2.6 1.2h8.2v8.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </div>
+        </details>
+        <details class="acc">
+          <summary>SHIPPING &amp; RETURNS</summary>
+          <ul class="acc__body shop-text">
+            <li>Ships from Tokyo in 2–3 days, worldwide, tracked</li>
+            <li>Duties may apply on delivery outside Japan</li>
+            <li>Returns within 14 days — unworn, with the tag on</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <!-- Размерная сетка (js/size-guide.js): окно справа на компьютере, снизу на всю высоту на телефоне -->
+  <dialog class="guide" id="size-guide" aria-labelledby="guide-title">
+    <div class="guide__panel">
+      <div class="guide__head">
+        <h2 class="guide__title" id="guide-title">SIZE GUIDE</h2>
+        <button class="guide__close" type="button" aria-label="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      </div>
+      <p class="guide__lead shop-text">One cut for every model: boxy, cropped at the hip — the way sukajan were tailored in Yokosuka in the 1950s. Garment measured flat.</p>
+      <div class="guide__units" role="group" aria-label="Units">
+        <button type="button" data-unit="cm" aria-pressed="true">CM</button>
+        <button type="button" data-unit="in" aria-pressed="false">IN</button>
+      </div>
+      <div class="guide__scroll">
+        <table class="guide__table">
+          <thead><tr><th scope="col">SIZE</th><th scope="col"><i>A</i><span>CHEST</span></th><th scope="col"><i>B</i><span>LENGTH</span></th><th scope="col"><i>C</i><span>SHOULDER</span></th><th scope="col"><i>D</i><span>SLEEVE</span></th><th scope="col">HEIGHT</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="guide__hint shop-text">Tap a size to choose it.</p>
+      <figure class="guide__figure">
+        <!-- схема замеров: куртка контуром, замеры — фирменным красным -->
+        <svg viewBox="0 0 340 250" role="img" aria-label="How to measure: A chest, B length, C shoulder, D sleeve">
+          <g fill="none" stroke="#fff" stroke-width="1.4" stroke-linejoin="round">
+            <path d="M118 30 Q170 52 222 30 L258 42 L314 186 L290 196 L246 98 L246 214 L94 214 L94 98 L50 196 L26 186 L82 42 Z"/>
+            <path d="M94 204 H246 M98 214 V204 M242 214 V204"/>
+            <path d="M28 179 L50 190 M290 190 L312 179"/>
+            <path d="M118 30 Q170 62 222 30 M170 50 V204"/>
+          </g>
+          <g stroke="#B53031" stroke-width="1.6" stroke-dasharray="4 3" fill="none">
+            <path d="M96 104 H244"/>
+            <path d="M236 38 V212"/>
+            <path d="M84 22 H256"/>
+            <path d="M268 36 L322 172"/>
+          </g>
+          <g fill="#B53031">
+            <rect x="160" y="108" width="20" height="20"/><rect x="226" y="142" width="20" height="20"/>
+            <rect x="160" y="4" width="20" height="20"/><rect x="304" y="86" width="20" height="20"/>
+          </g>
+          <g fill="#fff" font-family="Pixel, monospace" font-size="14" text-anchor="middle">
+            <text x="170" y="123">A</text><text x="236" y="157">B</text><text x="170" y="19">C</text><text x="314" y="101">D</text>
+          </g>
+        </svg>
+      </figure>
+      <dl class="guide__how shop-text">
+        <dt>A</dt><dd>Chest — armpit to armpit, jacket closed and laid flat</dd>
+        <dt>B</dt><dd>Length — from the top of the collar seam to the bottom of the rib</dd>
+        <dt>C</dt><dd>Shoulder — seam to seam across the back</dd>
+        <dt>D</dt><dd>Sleeve — from the shoulder seam to the end of the cuff</dd>
+      </dl>
+      <p class="guide__model shop-text">Model is 183 cm, 74 kg and wears L. Between two sizes, or planning a hoodie underneath — go one size up.</p>
+    </div>
+  </dialog>
+
+  <!-- ФУТЕР — как на главной -->
+  <footer class="footer" id="contacts">
+    <div class="footer__frame">
+      <nav class="footer__col footer__col--menu" aria-label="Footer">
+        <p class="footer__label">Menu</p>
+        <ul class="footer__links">
+          <li><a href="index.html#two-sides">ABOUT</a></li>
+          <li><a href="index.html#models">MODELS</a></li>
+          <li><a href="index.html#collections">COLLECTIONS</a></li>
+          <li><a href="index.html#drops">DROPS</a></li>
+        </ul>
+      </nav>
+      <div class="footer__col footer__col--social">
+        <p class="footer__label">Follow</p>
+        <ul class="footer__links">
+          <li><a href="#instagram">INSTAGRAM</a></li>
+          <li><a href="#telegram">TELEGRAM</a></li>
+        </ul>
+      </div>
+      <div class="footer__col footer__col--studio">
+        <p class="footer__label">Studio</p>
+        <ul class="footer__links footer__links--plain">
+          <li>YOKOSUKA, JAPAN</li>
+          <li>SHIPS FROM TOKYO</li>
+          <li>2–3 DAYS, WORLDWIDE</li>
+        </ul>
+      </div>
+      <a class="footer__logo" href="index.html" aria-label="YORU — home">
+        <img class="footer__mark" src="img/logo-mark-dark.svg?v=771e92f7" alt="">
+        <span class="footer__word">YORU</span>
+      </a>
+    </div>
+  </footer>
+
+  <script type="module" src="js/product.js?v=0da60f52"></script>
+</body>
+</html>

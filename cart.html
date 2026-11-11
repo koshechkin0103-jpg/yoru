@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="img/favicon.svg?v=82916df9" type="image/svg+xml">
+  <title>YORU — Cart</title>
+  <meta name="robots" content="noindex">
+  <link rel="preload" href="fonts/digital-upscaled-pixel.woff2?v=ca795961" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/heading-now-var.woff2?v=464df585" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/styles.css?v=6269e6fb">
+  <link rel="stylesheet" href="css/final.css?v=63a93421">
+  <link rel="stylesheet" href="css/shop.css?v=14c16d35">
+</head>
+<body>
+  <!-- ШАПКА: как на главной — логотип, меню, CART -->
+  <header class="topbar">
+    <a class="topbar__logo" href="index.html" aria-label="YORU — home"><img src="img/logo-mark.svg?v=7d82ea4d" alt=""><span>YORU</span></a>
+    <nav class="topbar__nav" aria-label="Main">
+      <button class="topbar__menu" type="button" aria-expanded="false" aria-controls="shop-menu">MENU</button>
+      <div class="topbar__links" id="shop-menu">
+        <a href="index.html#two-sides">ABOUT</a>
+        <a href="index.html#models">MODELS</a>
+        <a href="index.html#contacts">CONTACTS</a>
+      </div>
+      <a class="topbar__cart" href="cart.html" data-cart-link aria-current="page">CART</a>
+    </nav>
+  </header>
+
+  <!-- КОРЗИНА: как стандартная корзина Тильды — список, сумма, данные для заказа.
+       Товары хранятся в браузере (js/cart.js), заказ никуда не отправляется. -->
+  <main class="cart" id="cart">
+    <a class="shop-back" href="index.html#collections"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M15 8H2M7 3 2 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>BACK</a>
+    <div class="cart__head">
+      <h1 class="shop-head">CART</h1>
+      <p class="shop-text cart__count"></p>
+    </div>
+
+    <div class="cart__empty" hidden>
+      <p class="shop-text">Your cart is empty. Two sides of every jacket are still waiting.</p>
+      <a class="shop-btn" href="index.html#collections">SHOP THE COLLECTION</a>
+    </div>
+
+    <div class="cart__done" hidden>
+      <h2 class="cart__form-title">ORDER RECEIVED</h2>
+      <p class="shop-text">Thank you. We'll get in touch to confirm the size and delivery – usually within a day.</p>
+      <a class="shop-btn" href="index.html">BACK TO YORU</a>
+    </div>
+
+    <div class="cart__layout" hidden>
+      <ul class="cart__items"></ul>
+
+      <aside class="cart__aside" aria-label="Order">
+        <p class="shop-text cart__sum"><span>Subtotal</span><strong class="cart__subtotal"></strong></p>
+        <p class="shop-text cart__sum"><span>Shipping</span><span>From Tokyo, 2–3 days</span></p>
+        <p class="shop-text cart__sum cart__sum--total"><span>TOTAL</span><strong class="cart__total"></strong></p>
+
+        <form class="cart__form" novalidate>
+          <h2 class="cart__form-title">YOUR DETAILS</h2>
+          <label class="field-in"><span class="visually-hidden">Name</span><input name="name" type="text" placeholder="NAME" autocomplete="name" required></label>
+          <label class="field-in"><span class="visually-hidden">Phone</span><input name="phone" type="tel" placeholder="PHONE" autocomplete="tel" required></label>
+          <label class="field-in"><span class="visually-hidden">Email</span><input name="email" type="email" placeholder="EMAIL" autocomplete="email" required></label>
+          <label class="field-in"><span class="visually-hidden">Delivery address</span><input name="address" type="text" placeholder="COUNTRY, CITY, ADDRESS" autocomplete="street-address" required></label>
+          <label class="field-in"><span class="visually-hidden">Comment</span><textarea name="comment" placeholder="COMMENT"></textarea></label>
+          <button class="shop-btn" type="submit">PLACE ORDER <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.2 10.8 10.4 1.6M2.6 1.2h8.2v8.2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          <p class="shop-status cart__status" role="status" aria-live="polite"></p>
+        </form>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ФУТЕР — как на главной -->
+  <footer class="footer" id="contacts">
+    <div class="footer__frame">
+      <nav class="footer__col footer__col--menu" aria-label="Footer">
+        <p class="footer__label">Menu</p>
+        <ul class="footer__links">
+          <li><a href="index.html#two-sides">ABOUT</a></li>
+          <li><a href="index.html#models">MODELS</a></li>
+          <li><a href="index.html#collections">COLLECTIONS</a></li>
+          <li><a href="index.html#drops">DROPS</a></li>
+        </ul>
+      </nav>
+      <div class="footer__col footer__col--social">
+        <p class="footer__label">Follow</p>
+        <ul class="footer__links">
+          <li><a href="#instagram">INSTAGRAM</a></li>
+          <li><a href="#telegram">TELEGRAM</a></li>
+        </ul>
+      </div>
+      <div class="footer__col footer__col--studio">
+        <p class="footer__label">Studio</p>
+        <ul class="footer__links footer__links--plain">
+          <li>YOKOSUKA, JAPAN</li>
+          <li>SHIPS FROM TOKYO</li>
+          <li>2–3 DAYS, WORLDWIDE</li>
+        </ul>
+      </div>
+      <a class="footer__logo" href="index.html" aria-label="YORU — home">
+        <img class="footer__mark" src="img/logo-mark-dark.svg?v=771e92f7" alt="">
+        <span class="footer__word">YORU</span>
+      </a>
+    </div>
+  </footer>
+
+  <script type="module" src="js/cart-page.js?v=ba1b0b00"></script>
+</body>
+</html>
